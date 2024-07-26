@@ -1,0 +1,231 @@
+/* ----------- Darkmode ----------- */
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode Light.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 300;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode Regular.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode Medium.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode Bold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode XBold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "darkmode";
+  src: url("/fonts/Darkmode/Darkmode Black.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: normal;
+}
+
+/* ----------- Effra ----------- */
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Light.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 300;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Regular.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Medium.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Semibold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Bold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra XBold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "effra";
+  src: url("/fonts/Effra/Effra Black.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: normal;
+}
+/* ----------- END OF FONTFACES ----------- */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --text: #f8eded;
+
+    --success: #19af1e;
+
+    --error: #f44336;
+
+    --background: #13252a;
+
+    --primary: #b43f3f;
+
+    --primary-slanted: #8c2f2f;
+
+    --secondary: #ff8225;
+
+    --muted: #636363;
+
+    --muted-light: #959595;
+
+    --popover: 0, 0%, 96%;
+
+    --darkmode: "darkmode", sans-serif;
+    --effra: "effra", sans-serif;
+  }
+}
+
+@layer base {
+  html,
+  body {
+    @apply min-h-screen bg-background scroll-smooth m-0 p-0 font-darkmode overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .title {
+    @apply text-text font-effra text-4xl font-extrabold;
+  }
+  .text {
+    @apply text-text font-darkmode text-base font-medium;
+  }
+  .btn {
+    @apply text px-10 py-2.5 rounded-[10px] flex flex-row justify-center items-center duration-300 transition-all;
+  }
+  .btn-primary {
+    @apply bg-primary text-text hover:bg-[var(--primary-slanted)];
+  }
+  .transition-default {
+    @apply transition-all duration-300;
+  }
+
+  .nav-link {
+    @apply flex flex-row gap-3 items-center text font-effra text-xl font-medium;
+  }
+}
+
+.form-item {
+  position: relative;
+  background-color: var(--background);
+}
+
+.form-item input,
+.form-item textarea {
+  padding: 15px 16px;
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border-radius: 10px;
+  z-index: 1;
+  background-color: transparent;
+  border-width: 2px;
+  color: var(--text);
+}
+
+.form-item input:focus,
+.form-item textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.form-item label {
+  position: absolute;
+  top: 14px;
+  display: flex;
+  align-items: center;
+  left: 18px;
+  transition: 0.1s ease-in;
+  font-size: 1rem;
+  z-index: 0;
+}
+
+.form-item-translate label {
+  top: 9px;
+  left: 18px;
+}
+
+.form-item input:focus + label,
+label.up,
+.form-item textarea:focus + label {
+  top: -15px;
+  left: 15px;
+  font-size: 0.8rem;
+  background-color: inherit;
+  padding: 2px 5px;
+  z-index: 2;
+  background-color: var(--background);
+}
