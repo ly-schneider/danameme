@@ -60,7 +60,7 @@ export default function EmailPage() {
       )}
       <form
         onSubmit={handleSubmit}
-        className={"input-form space-y-4"}
+        className={"flex flex-col gap-4"}
       >
         <div className="flex flex-col">
           <div className="flex flex-col form-item">
@@ -87,17 +87,13 @@ export default function EmailPage() {
             {errors.email}
           </span>
         </div>
-        <div className="w-full">
-          <button className="btn btn-primary w-full" type="submit">
-            <Spinner className={"fill-text " + (loading ? "mr-3" : "hidden")} />
-            Weiter
-          </button>
-          <div className="mt-3">
-            <Link href="/anmelden" className="text text-secondary hover:underline">
-              Anmelden
-            </Link>
-          </div>
-        </div>
+        <button className="btn btn-primary w-full" type="submit">
+          <Spinner className={"fill-text " + (loading ? "mr-3" : "hidden")} />
+          Weiter
+        </button>
+        <Link href="/anmelden" className="text text-secondary hover:underline">
+          Anmelden
+        </Link>
       </form>
     </div>
   );

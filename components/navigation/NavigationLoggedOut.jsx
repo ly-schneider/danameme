@@ -50,7 +50,7 @@ export default function NavigationLoggedOut() {
           </div>
         </div>
       </SheetContent>
-      <aside className="nav:h-screen w-full nav:w-[18rem] bg-background nav:shadow-xl fixed">
+      <aside className="nav:h-screen w-full nav:w-[18rem] bg-background fixed">
         <nav className="px-6 py-4 nav:p-6 flex flex-col min-h-full">
           <div className="flex flex-row gap-4 items-center">
             <div>

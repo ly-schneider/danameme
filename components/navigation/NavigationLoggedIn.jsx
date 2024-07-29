@@ -110,8 +110,7 @@ export default function NavigationLoggedIn({ session }) {
             </li>
             <li>
               <Link onClick={closeSheet} className={"nav-link " + (isActive("/profil") ? "font-extrabold" : "")} href="/profil">
-                {account === null && <Skeleton className="w-7 h-7 bg-muted rounded-full ms-0.5" />}
-                {account !== null && <ProfileImage src={account.profileImage} width={28} height={28} className="ms-0.5" alt={`Profilbild von ${account.username}`} />}
+                {account === null ? <Skeleton className="w-7 h-7 bg-muted rounded-full ms-0.5" /> : <ProfileImage src={account.profileImage} width={28} height={28} className="ms-0.5" alt={`Profilbild von ${account.username}`} />}
                 Profil
               </Link>
             </li>
@@ -131,7 +130,7 @@ export default function NavigationLoggedIn({ session }) {
               </li>
               <li>
                 <button type="button" className={"nav-link"} onClick={handleLogout}>
-                  <Icon path={mdiLogout} size={1.15} className="ms-0.5 rotate-180" />
+                  <Icon path={mdiLogout} size={1.15} className="ms-[1px] rotate-180" />
                   Logout
                 </button>
               </li>
@@ -143,7 +142,7 @@ export default function NavigationLoggedIn({ session }) {
           </div>
         </div>
       </SheetContent>
-      <aside className="nav:h-screen w-full nav:w-[18rem] bg-background nav:shadow-xl fixed">
+      <aside className="nav:h-screen w-full nav:w-[18rem] bg-background fixed">
         <nav className="px-6 py-4 nav:p-6 flex flex-col min-h-full">
           <div className="flex flex-row gap-4 items-center">
             <div>
@@ -202,8 +201,7 @@ export default function NavigationLoggedIn({ session }) {
             </li>
             <li>
               <Link className={"nav-link " + (isActive("/profil") ? "font-extrabold" : "")} href="/profil">
-                {account === null && <Skeleton className="w-7 h-7 bg-muted rounded-full ms-0.5" />}
-                {account !== null && <ProfileImage src={account.profileImage} width={28} height={28} className="ms-0.5" alt={`Profilbild von ${account.username}`} />}
+                {account === null ? <Skeleton className="w-7 h-7 bg-muted rounded-full ms-0.5" /> : <ProfileImage src={account.profileImage} width={28} height={28} className="ms-0.5" alt={`Profilbild von ${account.username}`} />}
                 Profil
               </Link>
             </li>
@@ -223,7 +221,7 @@ export default function NavigationLoggedIn({ session }) {
               </li>
               <li>
                 <button type="button" className={"nav-link"} onClick={handleLogout}>
-                  <Icon path={mdiLogout} size={1.15} className="ms-0.5 rotate-180" />
+                  <Icon path={mdiLogout} size={1.15} className="ms-[1px] rotate-180" />
                   Logout
                 </button>
               </li>

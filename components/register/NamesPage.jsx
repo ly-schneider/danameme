@@ -62,8 +62,6 @@ export default function NamesPage() {
       firstname: "",
       lastname: "",
       username: "",
-      usernameLength: null,
-      usernameChars: null,
       terms: "",
     });
 
@@ -173,7 +171,7 @@ export default function NamesPage() {
       )}
       <form
         onSubmit={handleSubmit}
-        className={"input-form space-y-4"}
+        className={"flex flex-col gap-4"}
       >
         <div className="flex flex-col">
           <div className="flex flex-col form-item">

@@ -73,11 +73,22 @@ export async function POST(request) {
   }
 
   try {
-    // Check if the email is valid
-    const validateAccount = await Account.findOne({ email: reqBody.email });
-    if (validateAccount) {
+    const validateAccountEmail = await Account.findOne({
+      email: reqBody.email,
+    });
+    if (validateAccountEmail) {
       return NextResponse.json(
         { success: false, message: "E-Mail ist bereits registriert" },
+        { status: 409 }
+      );
+    }
+
+    const validateAccountUsername = await Account.findOne({
+      username: reqBody.username,
+    });
+    if (validateAccountUsername) {
+      return NextResponse.json(
+        { success: false, message: "Benutzername ist bereits vergeben" },
         { status: 409 }
       );
     }

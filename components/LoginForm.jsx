@@ -95,7 +95,7 @@ export default function LoginForm() {
       )}
       <form
         onSubmit={handleSubmit}
-        className={"input-form space-y-4"}
+        className={"flex flex-col gap-4"}
       >
         <div className="flex flex-col mt-1">
           <div className="flex flex-col form-item">
@@ -154,19 +154,17 @@ export default function LoginForm() {
             {errors.password}
           </span>
         </div>
-        <div className="w-full">
-          <button className="btn btn-primary w-full" type="submit">
-            <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
-            Anmelden
-          </button>
-          <div className="flex flex-row justify-between mt-3">
-            <Link href="/registrieren" className="text text-secondary hover:underline">
-              Registrieren
-            </Link>
-            <Link href="/passwort-vergessen" className="text text-secondary hover:underline">
-              Passwort vergessen
-            </Link>
-          </div>
+        <button className="btn btn-primary w-full" type="submit">
+          <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
+          Anmelden
+        </button>
+        <div className="flex flex-row justify-between">
+          <Link href="/registrieren" className="text text-secondary hover:underline">
+            Registrieren
+          </Link>
+          <Link href="/passwort-vergessen" className="text text-secondary hover:underline">
+            Passwort vergessen
+          </Link>
         </div>
       </form>
     </div>

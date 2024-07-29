@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import { getSession } from "./lib/Session";
 
 // Define paths for redirection logic
-export const blacklistPathsUnauthenticated = ["/", "/email-verifizieren"];
+export const blacklistPathsUnauthenticated = [
+  "/",
+  "/email-verifizieren",
+  "/einstellungen",
+];
 export const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
 
 export async function middleware(request) {
