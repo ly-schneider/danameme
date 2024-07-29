@@ -155,8 +155,8 @@ export default function LoginForm() {
           </span>
         </div>
         <div className="w-full">
-          <button className="btn btn-primary w-full group" type="submit">
-            <Spinner className={"fill-primary group-hover:fill-background transition-default " + (loading ? "mr-3" : "hidden")} />
+          <button className="btn btn-primary w-full" type="submit">
+            <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
             Anmelden
           </button>
           <div className="flex flex-row justify-between mt-3">

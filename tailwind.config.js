@@ -20,10 +20,7 @@ module.exports = {
       },
     },
     screens: {
-      home: "940px",
-      register: "880px",
-      nav: "510px",
-      xs: "450px",
+      nav: "835px",
       ...defaultTheme.screens,
     },
     extend: {
