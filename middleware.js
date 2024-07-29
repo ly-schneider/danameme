@@ -1,17 +1,26 @@
 import { NextResponse } from "next/server";
+import { getSession } from "./lib/Session";
+
+export const blacklistPathsUnauthenticated = ["/", "/email-verifizieren"];
+export const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
 
 export async function middleware(request) {
-  const url = new URL(request.url);
-  const origin = url.origin;
-  const pathname = url.pathname;
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-url", request.url);
-  requestHeaders.set("x-origin", origin);
-  requestHeaders.set("x-pathname", pathname);
+  const pathname = request.nextUrl.pathname;
+  const session = await getSession();
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  if (session) {
+    if (!session.user.emailVerified) {
+      return NextResponse.redirect(new URL("/email-verifizieren", request.url));
+    }
+
+    if (blacklistPathsAuthenticated.includes(pathname)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  } else {
+    if (blacklistPathsUnauthenticated.includes(pathname)) {
+      return NextResponse.redirect(new URL("/anmelden", request.url));
+    }
+  }
+
+  return NextResponse.next();
 }

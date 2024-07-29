@@ -20,7 +20,7 @@ export async function GET(request) {
     if (account) {
       return NextResponse.json(
         { success: false, message: "E-Mail Adresse ist bereits eingetragen" },
-        { status: 409 }
+        { status: 200 }
       );
     }
 

@@ -2,11 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Button } from "../ui/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBarsStaggered } from "@fortawesome/free-solid-svg-icons";
-import RenderPosition from "./RenderPosition";
+import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { useState } from "react";
 import Icon from "@mdi/react";
@@ -32,14 +28,11 @@ export default function NavigationLoggedOut() {
           <Link onClick={closeSheet} className={"text text-lg flex w-full items-center hover:underline " + (pathname == "/" ? "underline" : "")} href="/">
             Home
           </Link>
-          <Link onClick={closeSheet} className={"text text-lg flex w-full items-center hover:underline " + (pathname == "/ueber" ? "underline" : "")} href="/ueber">
-            Über
-          </Link>
         </div>
       </SheetContent>
-      <aside className="h-screen left-0 top-0 fixed w-[20rem] bg-background z-10">
+      <aside className="h-screen w-[18rem] bg-background shadow-xl border-r-0 border-[#101f24] fixed">
         <nav className="p-6 flex flex-col min-h-full">
-          <img src="/danameme-logo.png" alt="DANAMEME Logo" className="w-full h-auto" />
+          <img src="/images/danameme-logo.png" alt="DANAMEME Logo" className="w-full h-auto" />
           <ul className="flex flex-col gap-4 mt-8">
             <li>
               <Link className={"nav-link " + (isActive("/anmelden") ? "font-extrabold" : null)} href="/anmelden">
@@ -63,6 +56,5 @@ export default function NavigationLoggedOut() {
         </nav>
       </aside>
     </Sheet>
-
   );
 }

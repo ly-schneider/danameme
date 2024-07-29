@@ -1,6 +1,4 @@
-import RegisterForm from "@/components/RegisterForm";
-import { getSession } from "@/lib/Session";
-import { redirect } from "next/navigation";
+import RegisterHandler from "@/components/register/RegisterHandler";
 
 export async function generateMetadata() {
   return {
@@ -9,16 +7,11 @@ export async function generateMetadata() {
 }
 
 export default async function RegistrierenPage() {
-  const session = await getSession();
-  if (session) {
-    redirect("/");
-  }
-
   return (
-    <main className="mt-24">
+    <main className="mt-12">
       <section className="flex flex-col max-w-md w-full mx-auto">
         <h1 className="title">Registrieren</h1>
-        <RegisterForm />
+        <RegisterHandler />
       </section>
     </main>
   );

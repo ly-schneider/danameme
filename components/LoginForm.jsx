@@ -89,7 +89,7 @@ export default function LoginForm() {
   return (
     <div className="flex flex-col w-full mt-5">
       {errors.submit && (
-        <div className="rounded-[15px] bg-error px-4 py-2 text text-sm text-background text-center mb-5">
+        <div className="rounded-[10px] bg-error px-4 py-2 text text-sm text-center mb-4">
           {errors.submit}
         </div>
       )}

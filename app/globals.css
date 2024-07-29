@@ -83,7 +83,7 @@
 
 @font-face {
   font-family: "effra";
-  src: url("/fonts/Effra/Effra Semibold.ttf") format("opentype");
+  src: url("/fonts/Effra/Effra SemiBold.ttf") format("opentype");
   font-display: auto;
   font-style: normal;
   font-weight: 600;
@@ -116,6 +116,52 @@
   font-weight: 900;
   font-stretch: normal;
 }
+
+/* ----------- Lato ----------- */
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato/Lato Medium.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato/Lato SemiBold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato/Lato Bold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato/Lato XBold.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: normal;
+}
+
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato/Lato Black.ttf") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: normal;
+}
 /* ----------- END OF FONTFACES ----------- */
 
 @tailwind base;
@@ -126,7 +172,7 @@
   :root {
     --text: #f8eded;
 
-    --success: #19af1e;
+    --success: #1bcb21;
 
     --error: #f44336;
 
@@ -146,13 +192,14 @@
 
     --darkmode: "darkmode", sans-serif;
     --effra: "effra", sans-serif;
+    --lato: "lato", sans-serif;
   }
 }
 
 @layer base {
   html,
   body {
-    @apply min-h-screen bg-background scroll-smooth m-0 p-0 font-darkmode overflow-x-hidden;
+    @apply flex flex-row min-h-screen bg-background scroll-smooth m-0 p-0 font-darkmode overflow-x-hidden min-w-full;
   }
 }
 
@@ -160,8 +207,14 @@
   .title {
     @apply text-text font-effra text-4xl font-extrabold;
   }
+  .subtitle {
+    @apply text-text font-effra text-xl font-bold;
+  }
   .text {
     @apply text-text font-darkmode text-base font-medium;
+  }
+  .number {
+    @apply text font-lato;
   }
   .btn {
     @apply text px-10 py-2.5 rounded-[10px] flex flex-row justify-center items-center duration-300 transition-all;

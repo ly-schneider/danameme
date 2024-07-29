@@ -8,7 +8,6 @@ export async function POST(request) {
   await DBConnect();
 
   const { email, password } = await request.json();
-  console.log(email, password);
 
   try {
     // Check if the email is valid
@@ -51,6 +50,7 @@ export async function POST(request) {
     const payload = {
       id: account._id,
       email: account.email,
+      emailVerified: account.emailVerified,
     };
 
     const jwtToken = await encrypt(payload);

@@ -1,47 +1,75 @@
-import AccountPage from "@/app/account/page";
 import Now from "@/components/utils/TimeNow";
 import DBConnect from "@/lib/DBConnect";
-import { decrypt, encrypt } from "@/lib/Session";
+import { encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
-import Waitlist from "@/model/Waitlist";
 import { genSalt, hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
 const saltRounds = 10;
-
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
   await DBConnect();
 
   const reqBody = await request.json();
 
-  if (!reqBody.firstname) {
-    return NextResponse.json(
-      { success: false, message: "Vorname darf nicht leer sein" },
-      { status: 400 }
-    );
-  }
-
-  if (!reqBody.lastname) {
-    return NextResponse.json(
-      { success: false, message: "Nachname darf nicht leer sein" },
-      { status: 400 }
-    );
+  function respondWithError(message) {
+    return NextResponse.json({ success: false, message }, { status: 400 });
   }
 
   if (!reqBody.email) {
-    return NextResponse.json(
-      { success: false, message: "E-Mail darf nicht leer sein" },
-      { status: 400 }
-    );
+    return respondWithError("E-Mail darf nicht leer sein");
   }
 
   if (!reqBody.password) {
-    return NextResponse.json(
-      { success: false, message: "Passwort darf nicht leer sein" },
-      { status: 400 }
+    return respondWithError("Passwort darf nicht leer sein");
+  }
+
+  if (reqBody.password.length < 8) {
+    return respondWithError("Passwort muss mindestens 8 Zeichen lang sein");
+  }
+
+  if (!/[a-z]/.test(reqBody.password) || !/[A-Z]/.test(reqBody.password)) {
+    return respondWithError(
+      "Passwort muss mindestens einen Gross- und Kleinbuchstaben enthalten"
     );
+  }
+
+  if (!/[0-9]/.test(reqBody.password)) {
+    return respondWithError("Passwort muss mindestens eine Zahl enthalten");
+  }
+
+  if (!/[^\da-zA-Z]/.test(reqBody.password)) {
+    return respondWithError(
+      "Passwort muss mindestens ein Sonderzeichen enthalten"
+    );
+  }
+
+  if (!reqBody.firstname) {
+    return respondWithError("Vorname darf nicht leer sein");
+  }
+
+  if (!reqBody.lastname) {
+    return respondWithError("Nachname darf nicht leer sein");
+  }
+
+  if (!reqBody.username) {
+    return respondWithError("Benutzername darf nicht leer sein");
+  }
+
+  if (reqBody.username.length < 3 || reqBody.username.length > 15) {
+    return respondWithError(
+      "Benutzername muss zwischen 3 und 15 Zeichen lang sein"
+    );
+  }
+
+  if (!/^[a-zA-Z0-9_.-]+$/.test(reqBody.username)) {
+    return respondWithError(
+      "Benutzername darf nur 'aA', '0-9', '_', '.', '-' enthalten"
+    );
+  }
+
+  if (!reqBody.terms) {
+    return respondWithError("Sie müssen die Nutzungsbedingungen akzeptieren");
   }
 
   try {
@@ -54,32 +82,6 @@ export async function POST(request) {
       );
     }
 
-    let benefit = false;
-
-    let message = "";
-
-    const validateWaitlist = await Waitlist.findOne({ email: reqBody.email });
-    if (validateWaitlist) {
-      if (validateWaitlist.used == false && validateWaitlist.count <= 100) {
-        await Waitlist.updateOne(
-          { _id: validateWaitlist._id },
-          { $set: { used: true } }
-        ).exec();
-
-        benefit = true;
-        message = "Du hast erfolgreich die Vorteile der Warteliste erhalten!";
-      } else if (validateWaitlist.used == true) {
-        message =
-          "Diese E-Mail Adresse wurde bereits verwendet für die Vorteile der Warteliste!";
-      } else if (validateWaitlist.count > 100) {
-        message = `Du hast leider als Platz ${validateWaitlist.count} auf der Warteliste nicht die Vorteile erhalten!\nTrotzdem danke für dein Interesse!`;
-        await Waitlist.updateOne(
-          { _id: validateWaitlist._id },
-          { $set: { used: true } }
-        ).exec();
-      }
-    }
-
     const salt = await genSalt(saltRounds);
     const hashedPassword = await hash(reqBody.password, salt);
 
@@ -87,10 +89,9 @@ export async function POST(request) {
       createdAt: Now(),
       firstname: reqBody.firstname,
       lastname: reqBody.lastname,
+      username: reqBody.username,
       email: reqBody.email,
       password: hashedPassword,
-      stripeCustomerId: null,
-      benefit: benefit,
     };
 
     const account = await Account.create(body);
@@ -98,12 +99,13 @@ export async function POST(request) {
     const payload = {
       id: account._id,
       email: account.email,
+      emailVerified: false,
     };
 
     const jwtToken = await encrypt(payload);
 
     return NextResponse.json(
-      { success: true, data: account, waitlistMessage: message },
+      { success: true, data: account },
       { status: 201, headers: { accessToken: `Bearer ${jwtToken}` } }
     );
   } catch (error) {
@@ -112,101 +114,6 @@ export async function POST(request) {
       {
         success: false,
         message: "Es gab einen Fehler beim registrieren des Accounts",
-      },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(request) {
-  await DBConnect();
-
-  const reqBody = await request.json();
-  const jwtToken = request.headers.get("authorization");
-
-  const payload = await decrypt(jwtToken);
-
-  if (!payload) {
-    return NextResponse.json(
-      { success: false, message: "Forbidden" },
-      { status: 403 }
-    );
-  }
-
-  if (!reqBody.firstname) {
-    return NextResponse.json(
-      { success: false, message: "Vorname darf nicht leer sein" },
-      { status: 400 }
-    );
-  }
-
-  if (!reqBody.lastname) {
-    return NextResponse.json(
-      { success: false, message: "Nachname darf nicht leer sein" },
-      { status: 400 }
-    );
-  }
-
-  if (!reqBody.email) {
-    return NextResponse.json(
-      { success: false, message: "E-Mail darf nicht leer sein" },
-      { status: 400 }
-    );
-  }
-
-  try {
-    const account = await Account.findById(payload.id);
-    if (!account) {
-      throw new Error();
-    }
-
-    if (account.email !== reqBody.email) {
-      const validateAccount = await Account.findOne({ email: reqBody.email });
-      if (validateAccount) {
-        return NextResponse.json(
-          {
-            success: false,
-            type: "email-in-use",
-            message: "E-Mail Adresse ist bereits registriert",
-          },
-          { status: 409 }
-        );
-      }
-    }
-
-    const body = {
-      firstname: reqBody.firstname,
-      lastname: reqBody.lastname,
-      email: reqBody.email,
-    };
-
-    Account.updateOne({ _id: payload.id }, { $set: { ...body } }).exec();
-
-    await stripe.customers.update(account.stripeCustomerId, {
-      name: `${reqBody.firstname} ${reqBody.lastname}`,
-      email: reqBody.email,
-      metadata: {
-        accountId: account._id.toString(),
-      },
-    });
-
-    const newPayload = {
-      id: account._id,
-      email: reqBody.email,
-    };
-
-    const jwtToken = await encrypt(newPayload);
-
-    return NextResponse.json(
-      { success: true, data: account },
-      { status: 200, headers: { accessToken: `Bearer ${jwtToken}` } }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Es gab einen Fehler beim aktualisieren des Accounts",
       },
       { status: 500 }
     );

@@ -1,27 +1,26 @@
 import DBConnect from "@/lib/DBConnect";
 import Account from "@/model/Account";
-import Waitlist from "@/model/Waitlist";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
   await DBConnect();
 
   const searchParams = request.nextUrl.searchParams;
-  const email = searchParams.get("email");
+  const username = searchParams.get("username");
 
-  if (!email) {
+  if (!username) {
     return NextResponse.json(
-      { success: false, message: "E-Mail Adresse ist erforderlich" },
+      { success: false, message: "Benutzername ist erforderlich" },
       { status: 400 }
     );
   }
 
   try {
-    const waitlist = await Waitlist.findOne({ email: email });
-    if (!waitlist) {
+    const account = await Account.findOne({ username: username });
+    if (account) {
       return NextResponse.json(
-        { success: false, message: "E-Mail Adresse ist nicht eingetragen" },
-        { status: 404 }
+        { success: false, message: "Benutzername ist bereits eingetragen" },
+        { status: 200 }
       );
     }
 
