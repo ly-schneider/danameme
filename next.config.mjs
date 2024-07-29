@@ -6,6 +6,16 @@ const nextConfig = {
         ? "http://localhost:3000/api"
         : "https://www.danameme.ch/api",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "devdanameme.imgix.net",
+        port: "",
+        pathname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

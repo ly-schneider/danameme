@@ -50,6 +50,11 @@ const AccountSchema = new mongoose.Schema({
     require: true,
     default: false,
   },
+  profileImage: {
+    type: null || String,
+    required: true,
+    default: null,
+  },
 });
 
 export default mongoose.models.Account ||
