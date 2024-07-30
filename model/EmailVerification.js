@@ -5,10 +5,6 @@ const EmailVerificationSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  isValid: {
-    type: Boolean,
-    default: true,
-  },
   validUntil: {
     type: Date,
   },

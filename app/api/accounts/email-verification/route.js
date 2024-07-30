@@ -1,3 +1,4 @@
+import Now from "@/components/utils/TimeNow";
 import DBConnect from "@/lib/DBConnect";
 import { decrypt, encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
@@ -39,7 +40,7 @@ export async function POST(request) {
     await EmailVerification.create({
       code: code,
       email: payload.email,
-      validUntil: Date.now() + 30 * 60 * 1000, // 30 minutes
+      validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
     });
 
     sendEmailVerification(payload.email, code);
@@ -106,13 +107,6 @@ export async function PATCH(request) {
       email: payload.email,
     }).exec();
 
-    if (emailVerification.isValid === false) {
-      return NextResponse.json(
-        { success: false, message: "Der Bestätigungscode ist nicht valide" },
-        { status: 400 }
-      );
-    }
-
     if (now > validUntil) {
       return NextResponse.json(
         { success: false, message: "Der Bestätigungscode ist abgelaufen" },
@@ -142,14 +136,14 @@ export async function PATCH(request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Es gab einen Fehler beim generieren der Verifikationsmail",
+        message: "Es gab einen Fehler beim aktualisieren",
       },
       { status: 500 }
     );
   }
 }
 
-export async function sendEmailVerification(email, code) {
+async function sendEmailVerification(email, code) {
   let htmlContent =
     "<!DOCTYPE html>" +
     '<html lang="de">' +
@@ -226,14 +220,12 @@ export async function sendEmailVerification(email, code) {
     '<h1 class="my numbers">' +
     code +
     "</h1>" +
-    "<p>Dieser Code ist 30 Minuten lang gültig. <br /><br />Wenn Sie diesen Code nicht angefordert haben, können Sie diese E-Mail ignorieren, da Ihre E-Mail-Adresse u. U. versehentlich von einer anderen Person eingegeben wurde.<br /><br />- Dein DANAMEME Team</p>" +
+    "<p>Dieser Code ist 30 Minuten lang gültig. <br /><br />Wenn du diesen Code nicht angefordert hast, kannst du diese E-Mail ignorieren, da deine E-Mail-Adresse u. U. versehentlich von einer anderen Person eingegeben wurde.<br /><br />- Dein DANAMEME Team</p>" +
     "</div>" +
     '<p class="copyright">© 2024 DANAMEME, All rights reserved.</p>' +
     "</div>" +
     "</body>" +
     "</html>";
-
-  console.log("Sending email to " + email);
 
   await mailgun.messages.create(DOMAIN, {
     to: email,

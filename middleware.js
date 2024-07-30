@@ -14,7 +14,7 @@ export async function middleware(request) {
 
   // Regex to skip API routes, static files, and other paths
   const matchRegex =
-    /^\/((?!api|_next|favicon.ico|fonts|images|impressum|datenschutz).*)$/;
+    /^\/((?!api|_next|favicon.ico|fonts|images|impressum|datenschutz|passwort-).*)$/;
   if (!matchRegex.test(pathname)) {
     return NextResponse.next();
   }

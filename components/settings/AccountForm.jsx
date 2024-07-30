@@ -208,7 +208,7 @@ export default function AccountForm() {
           </span>
         </div>
         <Link href="/passwort-reset" className="text text-secondary hover:underline">
-          Passwort zurücksetzen
+          Passwort ändern
         </Link>
         <button className={"btn w-full " + (hasChanges() ? "btn-primary" : "btn-disabled")} type="submit">
           <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
