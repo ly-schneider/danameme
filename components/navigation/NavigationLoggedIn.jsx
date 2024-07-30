@@ -138,6 +138,7 @@ export default function NavigationLoggedIn({ session }) {
             <div className="flex flex-row flex-wrap gap-4 gap-y-1 mt-4">
               <Link href="/impressum" className="text text-sm text-muted hover:underline">Impressum</Link>
               <Link href="/datenschutz" className="text text-sm text-muted hover:underline">Datenschutz</Link>
+              <Link target="_blank" href="https://github.com/ly-schneider/danameme" className="text text-sm text-muted hover:underline">GitHub</Link>
             </div>
           </div>
         </div>
@@ -229,6 +230,7 @@ export default function NavigationLoggedIn({ session }) {
             <div className="flex flex-row flex-wrap gap-4 gap-y-1 mt-4">
               <Link href="/impressum" className="text text-sm text-muted hover:underline">Impressum</Link>
               <Link href="/datenschutz" className="text text-sm text-muted hover:underline">Datenschutz</Link>
+              <Link target="_blank" href="https://github.com/ly-schneider/danameme" className="text text-sm text-muted hover:underline">GitHub</Link>
             </div>
           </div>
         </nav>
