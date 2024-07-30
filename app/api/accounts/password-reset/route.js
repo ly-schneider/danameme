@@ -208,6 +208,8 @@ export async function PATCH(request) {
         );
       }
 
+      await PasswordReset.deleteOne({ guid: reqBody.guid }).exec();
+
       await Account.updateOne(
         { _id: account._id },
         {
