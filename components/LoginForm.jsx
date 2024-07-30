@@ -118,7 +118,7 @@ export default function LoginForm() {
               E-Mail Adresse
             </label>
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.email}
           </span>
         </div>
@@ -150,7 +150,7 @@ export default function LoginForm() {
               onClick={() => setShowPassword(!showPassword)}
             />
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.password}
           </span>
         </div>

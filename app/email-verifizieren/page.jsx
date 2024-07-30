@@ -10,7 +10,7 @@ export async function generateMetadata() {
 
 export default async function RegistrierenPage() {
   const session = await getSession();
-  if (session.user.emailVerified === true) {
+  if (session.user.emailVerified) {
     redirect("/");
   }
 

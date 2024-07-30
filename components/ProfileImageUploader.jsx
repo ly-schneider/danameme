@@ -3,7 +3,7 @@ import ProfileImage from "./ProfileImage";
 import { Skeleton } from "./ui/skeleton";
 import Cropper from "react-easy-crop";
 
-export default function ProfileImageUploader({ profileImage, croppedImage, setCroppedImage }) {
+export default function ProfileImageUploader({ formData, croppedImage, setCroppedImage }) {
   const [newImage, setNewImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -24,10 +24,12 @@ export default function ProfileImageUploader({ profileImage, croppedImage, setCr
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
+  // Inside your component
   const generateCroppedImage = useCallback(async () => {
     // Function to create cropped image from the croppedAreaPixels
-    const croppedImg = await getCroppedImg(newImage, croppedAreaPixels);
-    setCroppedImage(croppedImg);
+    const croppedImgBlobUrl = await getCroppedImg(newImage, croppedAreaPixels);
+    const croppedImgDataUrl = await blobToImage(croppedImgBlobUrl);
+    setCroppedImage(croppedImgDataUrl);
     setNewImage(null); // Reset newImage after cropping
   }, [croppedAreaPixels, newImage]);
 
@@ -43,10 +45,10 @@ export default function ProfileImageUploader({ profileImage, croppedImage, setCr
 
   return (
     <div className="flex flex-row items-center gap-5">
-      {profileImage === null ?
+      {!formData ?
         <Skeleton className="w-[150px] h-[150px] bg-muted rounded-full" />
         : croppedImage === null ?
-          <ProfileImage src={profileImage} width={150} height={150} alt={"Dein Profilbild"} />
+          <ProfileImage src={formData.profileImage} width={150} height={150} alt={"Dein Profilbild"} />
           :
           <ProfileImage src={croppedImage} width={150} height={150} alt={"Dein Profilbild"} className={"w-[150px] h-[150px] rounded-full object-cover"} />
       }
@@ -106,15 +108,18 @@ async function getCroppedImg(imageSrc, crop) {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+
   canvas.width = crop.width;
   canvas.height = crop.height;
 
   ctx.drawImage(
     image,
-    crop.x,
-    crop.y,
-    crop.width,
-    crop.height,
+    crop.x * scaleX,
+    crop.y * scaleY,
+    crop.width * scaleX,
+    crop.height * scaleY,
     0,
     0,
     crop.width,
@@ -138,5 +143,22 @@ function createImage(url) {
     image.addEventListener('load', () => resolve(image));
     image.addEventListener('error', (error) => reject(error));
     image.src = url;
+  });
+}
+
+// Utility function to convert blob URL to base64 image data URL
+function blobToImage(binaryUrl) {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement("canvas");
+    const img = document.createElement('img');
+    img.src = binaryUrl;
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const context = canvas.getContext("2d");
+      context.drawImage(img, 0, 0, img.width, img.height);
+      resolve(canvas.toDataURL());
+    };
+    img.onerror = (error) => reject(error);
   });
 }

@@ -4,9 +4,13 @@ import { useContext, useState } from "react";
 import Spinner from "../utils/Spinner";
 import Link from "next/link";
 import { SettingsContext } from "./SettingsHandler";
+import BackendUrl from "../utils/BackendUrl";
+import { mdiAlertOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import { saveSession } from "@/lib/Session";
 
 export default function AccountForm() {
-  let { originalData, formData, setFormData } = useContext(SettingsContext);
+  let { session, originalData, setOriginalData, formData, setFormData } = useContext(SettingsContext);
 
   const [errors, setErrors] = useState({
     submit: "",
@@ -20,23 +24,95 @@ export default function AccountForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-
-    console.log(formData)
-  }
-
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
   function hasChanges() {
     return (
       formData.email !== originalData.email ||
       formData.firstname !== originalData.firstname ||
       formData.lastname !== originalData.lastname
     );
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setErrors({
+      submit: "",
+      email: "",
+      firstname: "",
+      lastname: "",
+    });
+
+    if (!hasChanges()) {
+      setLoading(false);
+      return;
+    }
+
+    const localErrors = {}
+
+    if (formData.email === "") {
+      localErrors.email = "Bitte geben Sie Ihre E-Mail Adresse ein.";
+    }
+
+    if (formData.firstname === "") {
+      localErrors.firstname = "Bitte geben Sie Ihren Vornamen ein.";
+    }
+
+    if (formData.lastname === "") {
+      localErrors.lastname = "Bitte geben Sie Ihren Nachnamen ein.";
+    }
+
+    if (formData.email !== originalData.email) {
+      try {
+        const res = await fetch(`${BackendUrl()}/accounts/email?email=${formData.email}`, {
+          method: "GET",
+        });
+
+        if (!res.ok || res.status !== 200) {
+          throw new Error();
+        }
+
+        const data = await res.json();
+
+        if (!data.success) {
+          localErrors.email = "Diese E-Mail Adresse ist bereits vergeben.";
+        }
+      } catch (e) {
+        localErrors.submit = "Es gab einen Fehler beim überprüfen!";
+      }
+    }
+
+    if (Object.keys(localErrors).length > 0) {
+      setErrors(localErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BackendUrl()}/accounts/id/${session.user.id}/account`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ email: formData.email, firstname: formData.firstname, lastname: formData.lastname }),
+      });
+
+      if (!res.ok) {
+        throw new Error();
+      }
+
+      if (formData.email !== originalData.email) {
+        const token = res.headers.get("accesstoken").split(" ")[1];
+
+        await saveSession(token);
+      }
+
+      setFormData({ ...formData, email: formData.email, firstname: formData.firstname, lastname: formData.lastname });
+      setOriginalData({ ...originalData, email: formData.email, firstname: formData.firstname, lastname: formData.lastname });
+      setLoading(false);
+    } catch (e) {
+      setErrors({ submit: "Es gab einen Fehler beim aktualisieren!" });
+    }
   }
 
   return (
@@ -71,9 +147,15 @@ export default function AccountForm() {
               E-Mail Adresse
             </label>
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.email}
           </span>
+          {!session?.user.emailVerified && (
+            <Link href="/email-verifizieren" className="mt-1 text-sm text text-secondary hover:underline flex flex-row items-center gap-2">
+              <Icon path={mdiAlertOutline} size={0.8} />
+              E-Mail Adresse verifizieren
+            </Link>
+          )}
         </div>
         <div className="flex flex-col mt-1">
           <div className="flex flex-col form-item">
@@ -96,7 +178,7 @@ export default function AccountForm() {
               Vorname
             </label>
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.firstname}
           </span>
         </div>
@@ -121,7 +203,7 @@ export default function AccountForm() {
               Nachname
             </label>
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.lastname}
           </span>
         </div>

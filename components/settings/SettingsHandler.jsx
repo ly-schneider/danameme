@@ -4,10 +4,13 @@ import { createContext, useEffect, useState } from "react";
 import AccountForm from "./AccountForm";
 import BackendUrl from "../utils/BackendUrl";
 import ProfileForm from "./ProfileForm";
+import { useSearchParams } from "next/navigation";
 
 export const SettingsContext = createContext();
 
 export default function SettingsHandler({ session }) {
+  const searchParams = useSearchParams();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const [originalData, setOriginalData] = useState({
@@ -28,6 +31,15 @@ export default function SettingsHandler({ session }) {
   useEffect(() => {
     fetchAccount();
   }, []);
+
+  useEffect(() => {
+    if (searchParams.has("page")) {
+      const page = parseInt(searchParams.get("page"));
+      if (page === 1 || page === 2) {
+        setCurrentPage(page);
+      }
+    }
+  }, [searchParams]);
 
   async function fetchAccount() {
     try {
@@ -77,7 +89,7 @@ export default function SettingsHandler({ session }) {
           Profil
         </button>
       </div>
-      <SettingsContext.Provider value={{ session, originalData, currentPage, setCurrentPage, formData, setFormData }}>
+      <SettingsContext.Provider value={{ session, originalData, setOriginalData, currentPage, setCurrentPage, formData, setFormData }}>
         {currentPage === 1 && <AccountForm />}
         {currentPage === 2 && <ProfileForm />}
       </SettingsContext.Provider>

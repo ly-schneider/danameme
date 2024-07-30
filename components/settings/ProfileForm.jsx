@@ -3,15 +3,13 @@
 import { useContext, useEffect, useState } from "react";
 import Spinner from "../utils/Spinner";
 import { SettingsContext } from "./SettingsHandler";
-import ProfileImage from "../ProfileImage";
-import { Skeleton } from "../ui/skeleton";
 import ProfileImageUploader from "../ProfileImageUploader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 import BackendUrl from "../utils/BackendUrl";
 
 export default function ProfileForm() {
-  let { session, originalData, formData, setFormData } = useContext(SettingsContext);
+  let { session, originalData, setOriginalData, formData, setFormData } = useContext(SettingsContext);
 
   const [errors, setErrors] = useState({
     submit: "",
@@ -21,6 +19,28 @@ export default function ProfileForm() {
   const [usernameLength, setUsernameLength] = useState(null);
   const [usernameChars, setUsernameChars] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+
+  useEffect(() => {
+    setErrors((prev) => ({ ...prev, username: "" }));
+
+    if (formData.username === "") {
+      setUsernameLength(null);
+      setUsernameChars(null);
+      return;
+    }
+
+    if (formData.username.length >= 3 && formData.username.length <= 15) {
+      setUsernameLength(true);
+    } else if (usernameLength == true && (formData.username.length < 3 || formData.username.length > 15)) {
+      setUsernameLength(false);
+    }
+
+    if (/^[a-zA-Z0-9_.-]+$/.test(formData.username)) {
+      setUsernameChars(true);
+    } else if (usernameChars == true && !/^[a-zA-Z0-9_.-]+$/.test(formData.username)) {
+      setUsernameChars(false);
+    }
+  }, [formData.username]);
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -102,7 +122,7 @@ export default function ProfileForm() {
 
     try {
       if (formData.username !== originalData.username) {
-        const res = await fetch(`${BackendUrl()}/account/id/${session.user.id}/profile`, {
+        const res = await fetch(`${BackendUrl()}/accounts/id/${session.user.id}/profile`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -114,26 +134,25 @@ export default function ProfileForm() {
         if (!res.ok) {
           throw new Error();
         }
+
+        setFormData({ ...formData, username: formData.username });
+        setOriginalData({ ...originalData, username: formData.username });
       }
 
-      // TODO: Implement profile image upload api
+      if (croppedImage) {
+        const resImg = await fetch(`${BackendUrl()}/accounts/id/${session.user.id}/profile-image`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.accessToken}`,
+          },
+          body: JSON.stringify({ profileImage: croppedImage }),
+        });
 
-      // if (croppedImage) {
-      //   const imageData = new FormData();
-      //   imageData.append("profileImage", croppedImage);
-
-      //   const resImg = await fetch(`${BackendUrl()}/account/id/${session.user.id}/profile-image`, {
-      //     method: "POST",
-      //     headers: {
-      //       "Authorization": `Bearer ${session.accessToken}`,
-      //     },
-      //     body: imageData,
-      //   });
-
-      //   if (!resImg.ok) {
-      //     throw new Error();
-      //   }
-      // }
+        if (!resImg.ok) {
+          throw new Error();
+        }
+      }
 
       setLoading(false);
       setErrors({ submit: "" });
@@ -175,21 +194,23 @@ export default function ProfileForm() {
               Benutzername
             </label>
           </div>
-          <span className="mt-1 ms-0.5 text-sm text text-error">
+          <span className="mt-1 text-sm text text-error">
             {errors.username}
           </span>
-          <ul className="flex flex-col gap-2 text text-sm mt-1.5 mb-2">
-            <li className={"flex flex-row gap-1.5 items-center " + (usernameLength === null ? "text-muted" : usernameLength === true ? "text-success" : "text-error")}>
-              <FontAwesomeIcon icon={usernameLength ? faCheckCircle : faXmarkCircle} />
-              Mindestens 3, maximal 15 Zeichen
-            </li>
-            <li className={"flex flex-row gap-1.5 items-center " + (usernameChars === null ? "text-muted" : usernameChars === true ? "text-success" : "text-error")}>
-              <FontAwesomeIcon icon={usernameChars ? faCheckCircle : faXmarkCircle} />
-              Nur 'aA', '0-9', '_', '.', '-' erlaubt
-            </li>
-          </ul>
+          {formData.username !== originalData.username && (
+            <ul className="flex flex-col gap-2 text text-sm mt-1.5 mb-2">
+              <li className={"flex flex-row gap-1.5 items-center " + (usernameLength === null ? "text-muted" : usernameLength === true ? "text-success" : "text-error")}>
+                <FontAwesomeIcon icon={usernameLength ? faCheckCircle : faXmarkCircle} />
+                Mindestens 3, maximal 15 Zeichen
+              </li>
+              <li className={"flex flex-row gap-1.5 items-center " + (usernameChars === null ? "text-muted" : usernameChars === true ? "text-success" : "text-error")}>
+                <FontAwesomeIcon icon={usernameChars ? faCheckCircle : faXmarkCircle} />
+                Nur 'aA', '0-9', '_', '.', '-' erlaubt
+              </li>
+            </ul>
+          )}
         </div>
-        <ProfileImageUploader profileImage={formData.profileImage} croppedImage={croppedImage} setCroppedImage={setCroppedImage} />
+        <ProfileImageUploader formData={formData} croppedImage={croppedImage} setCroppedImage={setCroppedImage} />
         <button className={"btn w-full " + (hasChanges() ? "btn-primary" : "btn-disabled")} type="submit">
           <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
           Speichern

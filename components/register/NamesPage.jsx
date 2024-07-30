@@ -273,7 +273,7 @@ export default function NamesPage() {
             </label>
           </div>
           {errors.terms && (
-            <span className="ms-0.5 text-sm text text-error">
+            <span className="text-sm text text-error">
               {errors.terms}
             </span>
           )}

@@ -22,7 +22,11 @@ export async function middleware(request) {
   const session = await getSession();
 
   if (session) {
-    if (!session.user.emailVerified && pathname !== "/email-verifizieren") {
+    if (
+      !session.user.emailVerified &&
+      pathname !== "/email-verifizieren" &&
+      pathname !== "/einstellungen"
+    ) {
       return NextResponse.redirect(new URL("/email-verifizieren", request.url));
     }
 

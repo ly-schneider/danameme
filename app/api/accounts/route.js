@@ -1,3 +1,4 @@
+import BackendUrl from "@/components/utils/BackendUrl";
 import Now from "@/components/utils/TimeNow";
 import DBConnect from "@/lib/DBConnect";
 import { encrypt } from "@/lib/Session";
@@ -115,8 +116,19 @@ export async function POST(request) {
 
     const jwtToken = await encrypt(payload);
 
+    const res = await fetch(`${BackendUrl()}/accounts/email-verification`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    if (!res.ok || res.status !== 200) {
+      throw new Error();
+    }
+
     return NextResponse.json(
-      { success: true, data: account },
+      { success: true },
       { status: 201, headers: { accessToken: `Bearer ${jwtToken}` } }
     );
   } catch (error) {

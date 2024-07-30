@@ -52,7 +52,7 @@ const AccountSchema = new mongoose.Schema({
   },
   profileImage: {
     type: null || String,
-    required: true,
+    required: false,
     default: null,
   },
 });
