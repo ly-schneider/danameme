@@ -87,8 +87,6 @@ export default function PasswordReset({ session }) {
         method: "GET",
       });
 
-      console.log(res)
-
       const data = await res.json();
 
       if (!res.ok || res.status !== 200) {
@@ -114,7 +112,7 @@ export default function PasswordReset({ session }) {
 
       setValidToken(true);
     } catch (error) {
-      console.error("An error occurred while fetching the data.");
+      console.error("An error occurred while fetching the data");
       setValidToken({
         success: false,
         message: "Es gab einen Fehler beim überprüfen",
@@ -139,7 +137,7 @@ export default function PasswordReset({ session }) {
     let localPasswordSpecial = null;
 
     if (formData.password === "") {
-      localErrors.password = "Bitte gib dein neues Passwort ein.";
+      localErrors.password = "Bitte gib dein neues Passwort ein";
     } else {
       if (formData.password.length < 8) {
         localPasswordLength = false
@@ -167,11 +165,11 @@ export default function PasswordReset({ session }) {
     }
 
     if (formData.confirmPassword === "") {
-      localErrors.confirmPassword = "Bitte bestätigen dein neues Passwort.";
+      localErrors.confirmPassword = "Bitte bestätigen dein neues Passwort";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      localErrors.confirmPassword = "Die Passwörter stimmen nicht überein.";
+      localErrors.confirmPassword = "Die Passwörter stimmen nicht überein";
     }
 
     if (Object.keys(localErrors).length > 0) {
@@ -215,8 +213,6 @@ export default function PasswordReset({ session }) {
         });
       }
 
-      console.log(res)
-
       const data = await res.json();
 
       if (!res.ok || res.status !== 200) {
@@ -242,7 +238,7 @@ export default function PasswordReset({ session }) {
     } catch (error) {
       console.error("An error occurred");
       setErrors({
-        submit: "Es gab einen Fehler beim zurücksetzen deines Passworts.",
+        submit: "Es gab einen Fehler beim zurücksetzen deines Passworts",
         password: "",
         confirmPassword: "",
       });

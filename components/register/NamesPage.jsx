@@ -71,15 +71,15 @@ export default function NamesPage() {
     let localUsernameChars = null;
 
     if (formData.firstname === "") {
-      localErrors.firstname = "Vorname darf nicht leer sein";
+      localErrors.firstname = "Bitte gib deinen Vornamen ein";
     }
 
     if (formData.lastname === "") {
-      localErrors.lastname = "Nachname darf nicht leer sein";
+      localErrors.lastname = "Bitte gib deinen Nachnamen ein";
     }
 
     if (formData.username === "") {
-      localErrors.username = "Benutzername darf nicht leer sein";
+      localErrors.username = "Bitte gib deinen Benutzername ein";
     } else {
       if (formData.username.length < 3 || formData.username.length > 15) {
         localUsernameLength = false;
@@ -109,7 +109,7 @@ export default function NamesPage() {
             localErrors.username = "Dieser Benutzername ist bereits vergeben";
           }
         } catch (e) {
-          localErrors.submit = "Es gab einen Fehler beim überprüfen!";
+          localErrors.submit = "Es gab einen Fehler beim überprüfen";
         }
       }
     }

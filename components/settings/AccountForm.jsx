@@ -50,15 +50,15 @@ export default function AccountForm() {
     const localErrors = {}
 
     if (formData.email === "") {
-      localErrors.email = "Bitte geben Sie Ihre E-Mail Adresse ein.";
+      localErrors.email = "Bitte gib deine E-Mail Adresse ein";
     }
 
     if (formData.firstname === "") {
-      localErrors.firstname = "Bitte geben Sie Ihren Vornamen ein.";
+      localErrors.firstname = "Bitte gib deinen Vornamen ein";
     }
 
     if (formData.lastname === "") {
-      localErrors.lastname = "Bitte geben Sie Ihren Nachnamen ein.";
+      localErrors.lastname = "Bitte gib deinen Nachnamen ein";
     }
 
     if (formData.email !== originalData.email) {
@@ -74,10 +74,10 @@ export default function AccountForm() {
         const data = await res.json();
 
         if (!data.success) {
-          localErrors.email = "Diese E-Mail Adresse ist bereits vergeben.";
+          localErrors.email = "Diese E-Mail Adresse ist bereits vergeben";
         }
       } catch (e) {
-        localErrors.submit = "Es gab einen Fehler beim überprüfen!";
+        localErrors.submit = "Es gab einen Fehler beim überprüfen";
       }
     }
 
@@ -111,7 +111,7 @@ export default function AccountForm() {
       setOriginalData({ ...originalData, email: formData.email, firstname: formData.firstname, lastname: formData.lastname });
       setLoading(false);
     } catch (e) {
-      setErrors({ submit: "Es gab einen Fehler beim aktualisieren!" });
+      setErrors({ submit: "Es gab einen Fehler beim aktualisieren" });
     }
   }
 

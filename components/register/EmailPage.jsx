@@ -24,7 +24,7 @@ export default function EmailPage() {
     setErrors({ submit: "", email: "" });
 
     if (formData.email === "") {
-      setErrors({ email: "Bitte geben Sie Ihre E-Mail Adresse ein." });
+      setErrors({ email: "Bitte gib deine E-Mail Adresse ein" });
       setLoading(false);
       return;
     }
@@ -43,11 +43,11 @@ export default function EmailPage() {
       if (data.success) {
         setCurrentPage(2);
       } else {
-        setErrors({ email: "Diese E-Mail Adresse ist bereits vergeben." });
+        setErrors({ email: "Diese E-Mail Adresse ist bereits vergeben" });
         setLoading(false);
       }
     } catch (e) {
-      setErrors({ submit: "Es gab einen Fehler beim überprüfen!" });
+      setErrors({ submit: "Es gab einen Fehler beim überprüfen" });
     }
   }
 

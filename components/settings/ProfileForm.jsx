@@ -72,7 +72,7 @@ export default function ProfileForm() {
     let localUsernameChars = null;
 
     if (formData.username === "") {
-      localErrors.username = "Benutzername darf nicht leer sein";
+      localErrors.username = "Bitte gib deinen Benutzernamen ein";
     } else {
       if (formData.username.length < 3 || formData.username.length > 15) {
         localUsernameLength = false;

@@ -69,7 +69,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex flex-col w-full mt-5">
-      <p className="text mb-4">Gib die E-Mail Adresse von deinem Account an</p>
+      <p className="text mb-4">Bitte gib die E-Mail Adresse von deinem Account an</p>
       {errors.submit && (
         <div className="rounded-[10px] bg-error px-4 py-2 text text-sm text-center mb-4">
           {errors.submit}

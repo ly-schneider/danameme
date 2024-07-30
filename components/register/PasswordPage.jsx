@@ -88,7 +88,7 @@ export default function PasswordPage() {
     let localPasswordSpecial = null;
 
     if (formData.password === "") {
-      localErrors.password = "Bitte geben Sie Ihr Passwort ein.";
+      localErrors.password = "Bitte gib dein Passwort ein";
     } else {
       if (formData.password.length < 8) {
         localPasswordLength = false
@@ -116,11 +116,11 @@ export default function PasswordPage() {
     }
 
     if (confirmPassword === "") {
-      localErrors.confirmPassword = "Bitte bestätigen Sie Ihr Passwort.";
+      localErrors.confirmPassword = "Bitte bestätige dein Passwort";
     }
 
     if (formData.password !== confirmPassword) {
-      localErrors.confirmPassword = "Die Passwörter stimmen nicht überein.";
+      localErrors.confirmPassword = "Die Passwörter stimmen nicht überein";
     }
 
     if (Object.keys(localErrors).length > 0) {

@@ -31,11 +31,11 @@ export default function LoginForm() {
     let newErrors = {};
 
     if (formData.email === "") {
-      newErrors.email = "Bitte gib deine E-Mail Adresse ein.";
+      newErrors.email = "Bitte gib deine E-Mail Adresse ein";
     }
 
     if (formData.password === "") {
-      newErrors.password = "Bitte gib dein Passwort ein.";
+      newErrors.password = "Bitte gib dein Passwort ein";
     }
 
     if (Object.keys(newErrors).length !== 0) {
@@ -77,7 +77,7 @@ export default function LoginForm() {
         }
       }
     } catch (error) {
-      setErrors({ submit: "Ein Fehler ist aufgetreten. Bitte versuche es erneut." });
+      setErrors({ submit: "Es gab einen Fehler" });
       setLoading(false);
     }
   }
