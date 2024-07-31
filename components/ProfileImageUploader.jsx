@@ -62,6 +62,7 @@ export default function ProfileImageUploader({ formData, croppedImage, setCroppe
           type="file"
           id="fileInput"
           className="hidden"
+          accept="image/*"
           ref={fileInputRef}
           onChange={handleFileChange}
         />

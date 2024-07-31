@@ -225,6 +225,9 @@
   .btn-disabled {
     @apply bg-muted text-mutedLight cursor-default pointer-events-none;
   }
+  .btn-simple {
+    @apply bg-transparent text-text p-[14px_16px] border-2 border-text;
+  }
   .transition-default {
     @apply transition-all duration-300;
   }

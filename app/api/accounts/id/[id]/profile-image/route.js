@@ -72,15 +72,18 @@ export async function PATCH(request, context) {
       "image/png": "png",
     };
 
+    const fileType = fileTypeToExtension[file.type];
+    if (!fileType) {
+      return NextResponse.json(
+        { success: false, message: "Dateityp nicht unterstützt" },
+        { status: 400 }
+      );
+    }
+
     const time = Now().getTime();
 
     const blobName =
-      "profile-images/" +
-      file.name +
-      "-" +
-      time +
-      "." +
-      fileTypeToExtension[file.type];
+      "profile-images/" + file.name + "-" + time + "." + fileType;
     const blobServiceClient = BlobServiceClient.fromConnectionString(
       process.env.AZURE_CONNECTION_STRING
     );
@@ -106,7 +109,7 @@ export async function PATCH(request, context) {
       "-" +
       time +
       "." +
-      fileTypeToExtension[file.type];
+      fileType;
 
     await Account.updateOne(
       { _id: id },

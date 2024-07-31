@@ -6,6 +6,7 @@ export const blacklistPathsUnauthenticated = [
   "/",
   "/email-verifizieren",
   "/einstellungen",
+  "/posten",
 ];
 export const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
 

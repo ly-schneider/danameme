@@ -126,7 +126,7 @@ export default function AccountForm() {
         onSubmit={handleSubmit}
         className={"flex flex-col gap-4"}
       >
-        <div className="flex flex-col mt-1">
+        <div className="flex flex-col">
           <div className="flex flex-col form-item">
             <input
               className={
@@ -157,7 +157,7 @@ export default function AccountForm() {
             </Link>
           )}
         </div>
-        <div className="flex flex-col mt-1">
+        <div className="flex flex-col">
           <div className="flex flex-col form-item">
             <input
               className={
@@ -182,7 +182,7 @@ export default function AccountForm() {
             {errors.firstname}
           </span>
         </div>
-        <div className="flex flex-col mt-1">
+        <div className="flex flex-col">
           <div className="flex flex-col form-item">
             <input
               className={

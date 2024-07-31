@@ -173,7 +173,7 @@ export default function ProfileForm() {
         onSubmit={handleSubmit}
         className={"flex flex-col gap-4"}
       >
-        <div className="flex flex-col mt-1">
+        <div className="flex flex-col">
           <div className="flex flex-col form-item">
             <input
               className={
