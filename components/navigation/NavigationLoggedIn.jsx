@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { useEffect, useState } from "react";
 import Icon from "@mdi/react";
-import { mdiBell, mdiBellOutline, mdiBookmark, mdiBookmarkOutline, mdiCog, mdiCogOutline, mdiHome, mdiHomeOutline, mdiLogout, mdiMagnify, mdiTrophy, mdiTrophyOutline } from "@mdi/js";
+import { mdiBell, mdiBellOutline, mdiBookmark, mdiBookmarkOutline, mdiCog, mdiCogOutline, mdiDotsHorizontal, mdiHome, mdiHomeOutline, mdiLogout, mdiMagnify, mdiTrophy, mdiTrophyOutline } from "@mdi/js";
 import IconPodiumOutline from "../icons/IconPodiumOutline";
 import IconPodium from "../icons/IconPodium";
 import ProfileImage from "../ProfileImage";
@@ -78,7 +78,7 @@ export default function NavigationLoggedIn({ session }) {
                 Home
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link onClick={closeSheet} className={"nav-link " + (isActive("/suchen") ? "font-extrabold" : "")} href="/suchen">
                 <Icon path={mdiMagnify} size={1.15} />
                 Suchen
@@ -107,6 +107,12 @@ export default function NavigationLoggedIn({ session }) {
                 <Icon path={isActive("/motm") ? mdiTrophy : mdiTrophyOutline} size={1.1} className="ms-0.5" />
                 MOTM
               </Link>
+            </li> */}
+            <li>
+              <p className={"nav-link text-muted text-base"}>
+                <Icon path={mdiDotsHorizontal} size={1.15} />
+                Mehr kommt bald
+              </p>
             </li>
             <li>
               <Link onClick={closeSheet} className={"nav-link " + (isActive("/profil") ? "font-extrabold" : "")} href="/profil">
@@ -170,7 +176,7 @@ export default function NavigationLoggedIn({ session }) {
                 Home
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link className={"nav-link " + (isActive("/suchen") ? "font-extrabold" : "")} href="/suchen">
                 <Icon path={mdiMagnify} size={1.15} />
                 Suchen
@@ -199,6 +205,12 @@ export default function NavigationLoggedIn({ session }) {
                 <Icon path={isActive("/motm") ? mdiTrophy : mdiTrophyOutline} size={1.1} className="ms-0.5" />
                 MOTM
               </Link>
+            </li> */}
+            <li>
+              <p className={"nav-link text-muted text-base"}>
+                <Icon path={mdiDotsHorizontal} size={1.15} />
+                Mehr kommt bald
+              </p>
             </li>
             <li>
               <Link className={"nav-link " + (isActive("/profil") ? "font-extrabold" : "")} href="/profil">
