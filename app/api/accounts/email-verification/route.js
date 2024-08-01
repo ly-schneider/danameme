@@ -1,9 +1,10 @@
 import Now from "@/components/utils/TimeNow";
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import { decrypt, encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import EmailVerification from "@/model/EmailVerification";
 import Mailgun from "mailgun.js";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 const API_KEY = process.env.MAILGUN_API_KEY;
@@ -29,7 +30,11 @@ export async function POST(request) {
     );
   }
 
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     let code = 0;
     do {
       code = Math.floor(100000 + Math.random() * 900000);
@@ -37,17 +42,27 @@ export async function POST(request) {
       await EmailVerification.findOne({ code: code, email: payload.email })
     );
 
-    await EmailVerification.create({
-      code: code,
-      email: payload.email,
-      validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
-    });
+    await EmailVerification.create(
+      [
+        {
+          code: code,
+          email: payload.email,
+          validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
+        },
+      ],
+      { session }
+    );
 
-    sendEmailVerification(payload.email, code);
+    await sendEmailVerification(payload.email, code);
+
+    await session.commitTransaction();
+    session.endSession();
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);
+    await session.abortTransaction();
+    session.endSession();
     return NextResponse.json(
       {
         success: false,

@@ -56,15 +56,21 @@ export default function PostForm({ session }) {
     }
 
     try {
+      // Turn the File Object into a data:image URL
+      const imageUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(formData.image);
+      });
+
       const res = await fetch(`${BackendUrl()}/post`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${session.accessToken}`,
         },
         body: JSON.stringify({
           title: formData.title,
-          image: formData.image,
+          image: imageUrl,
         }),
       });
 

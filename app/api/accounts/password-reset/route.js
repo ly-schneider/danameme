@@ -1,11 +1,11 @@
 import Now from "@/components/utils/TimeNow";
-import DBConnect from "@/lib/DBConnect";
-import { decrypt, encrypt } from "@/lib/Session";
+import DBConnect from "@/lib/Mongoose";
+import { decrypt } from "@/lib/Session";
 import Account from "@/model/Account";
-import EmailVerification from "@/model/EmailVerification";
 import PasswordReset from "@/model/PasswordReset";
 import { genSalt, hash } from "bcrypt";
 import Mailgun from "mailgun.js";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 const saltRounds = 10;
@@ -85,11 +85,17 @@ export async function POST(request) {
     );
   }
 
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const validateAccountEmail = await Account.findOne({
       email: reqBody.email,
     });
     if (!validateAccountEmail) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         {
           success: false,
@@ -106,17 +112,27 @@ export async function POST(request) {
       guid = crypto.randomUUID();
     } while (await PasswordReset.findOne({ guid: guid, email: reqBody.email }));
 
-    await PasswordReset.create({
-      guid: guid,
-      email: reqBody.email,
-      validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
-    });
+    await PasswordReset.create(
+      [
+        {
+          guid: guid,
+          email: reqBody.email,
+          validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
+        },
+      ],
+      { session }
+    );
 
-    sendEmailVerification(reqBody.email, guid);
+    await sendEmailVerification(reqBody.email, guid);
+
+    await session.commitTransaction();
+    session.endSession();
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);
+    await session.abortTransaction();
+    session.endSession();
     return NextResponse.json(
       {
         success: false,
@@ -144,11 +160,17 @@ export async function PATCH(request) {
   const salt = await genSalt(saltRounds);
   const hashedPassword = await hash(reqBody.password, salt);
 
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     if (jwtToken) {
       const payload = await decrypt(jwtToken);
 
       if (!payload) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           { success: false, message: "Nicht berechtigt" },
           { status: 403 }
@@ -161,10 +183,13 @@ export async function PATCH(request) {
           $set: {
             password: hashedPassword,
           },
-        }
+        },
+        { session }
       ).exec();
     } else {
       if (!reqBody.guid) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           { success: false, message: "GUID/Token muss vorhanden sein" },
           { status: 400 }
@@ -175,6 +200,8 @@ export async function PATCH(request) {
         guid: reqBody.guid,
       });
       if (!passwordReset) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           { success: false, type: "bad-token", message: "Ungültiger Token" },
           { status: 400 }
@@ -188,6 +215,8 @@ export async function PATCH(request) {
       );
 
       if (Now() > validUntil) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           {
             success: false,
@@ -202,13 +231,15 @@ export async function PATCH(request) {
         email: passwordReset.email,
       });
       if (!account) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           { success: false, message: "Account nicht gefunden" },
           { status: 404 }
         );
       }
 
-      await PasswordReset.deleteOne({ guid: reqBody.guid }).exec();
+      await PasswordReset.deleteOne({ guid: reqBody.guid }, { session }).exec();
 
       await Account.updateOne(
         { _id: account._id },
@@ -216,13 +247,19 @@ export async function PATCH(request) {
           $set: {
             password: hashedPassword,
           },
-        }
+        },
+        { session }
       ).exec();
     }
+
+    await session.commitTransaction();
+    session.endSession();
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);
+    await session.abortTransaction();
+    session.endSession();
     return NextResponse.json(
       {
         success: false,

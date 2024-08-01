@@ -1,5 +1,5 @@
 import Now from "@/components/utils/TimeNow";
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import { BlobServiceClient } from "@azure/storage-blob";
@@ -116,12 +116,14 @@ export async function PATCH(request, context) {
       { $set: { profileImage: imageUrl } }
     ).exec();
 
-    // Delete the old profile image from the Blob Storage
-    const oldProfileImage = account.profileImage.split("/").pop();
-    const oldBlockBlobClient = containerClient.getBlockBlobClient(
-      "profile-images/" + oldProfileImage
-    );
-    await oldBlockBlobClient.deleteIfExists();
+    if (account.profileImage !== null) {
+      // Delete the old profile image from the Blob Storage
+      const oldProfileImage = account.profileImage.split("/").pop();
+      const oldBlockBlobClient = containerClient.getBlockBlobClient(
+        "profile-images/" + oldProfileImage
+      );
+      await oldBlockBlobClient.deleteIfExists();
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

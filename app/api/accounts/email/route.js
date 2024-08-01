@@ -1,4 +1,4 @@
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import Account from "@/model/Account";
 import { NextResponse } from "next/server";
 

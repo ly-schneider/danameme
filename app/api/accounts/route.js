@@ -1,9 +1,10 @@
 import BackendUrl from "@/components/utils/BackendUrl";
 import Now from "@/components/utils/TimeNow";
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import { encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import { genSalt, hash } from "bcrypt";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 const saltRounds = 10;
@@ -73,11 +74,17 @@ export async function POST(request) {
     return respondWithError("Sie müssen die Nutzungsbedingungen akzeptieren");
   }
 
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const validateAccountEmail = await Account.findOne({
       email: reqBody.email,
     });
     if (validateAccountEmail) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         { success: false, message: "E-Mail ist bereits registriert" },
         { status: 409 }
@@ -88,6 +95,8 @@ export async function POST(request) {
       username: reqBody.username,
     });
     if (validateAccountUsername) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         { success: false, message: "Benutzername ist bereits vergeben" },
         { status: 409 }
@@ -97,16 +106,16 @@ export async function POST(request) {
     const salt = await genSalt(saltRounds);
     const hashedPassword = await hash(reqBody.password, salt);
 
-    const body = {
+    const account = new Account({
       createdAt: Now(),
       firstname: reqBody.firstname,
       lastname: reqBody.lastname,
       username: reqBody.username,
       email: reqBody.email,
       password: hashedPassword,
-    };
+    });
 
-    const account = await Account.create(body);
+    await account.save({ session });
 
     const payload = {
       id: account._id,
@@ -127,12 +136,17 @@ export async function POST(request) {
       throw new Error();
     }
 
+    await session.commitTransaction();
+    session.endSession();
+
     return NextResponse.json(
       { success: true },
       { status: 201, headers: { accessToken: `Bearer ${jwtToken}` } }
     );
   } catch (error) {
     console.error(error);
+    await session.abortTransaction();
+    session.endSession();
     return NextResponse.json(
       {
         success: false,

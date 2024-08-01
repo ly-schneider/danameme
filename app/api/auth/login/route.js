@@ -1,4 +1,4 @@
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import { encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import { compare } from "bcrypt";

@@ -1,7 +1,8 @@
 import BackendUrl from "@/components/utils/BackendUrl";
-import DBConnect from "@/lib/DBConnect";
+import DBConnect from "@/lib/Mongoose";
 import { decrypt, encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function PATCH(request, context) {
@@ -43,15 +44,23 @@ export async function PATCH(request, context) {
     );
   }
 
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const account = await Account.findById(id);
     if (!account) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         { success: false, message: "Account nicht gefunden" },
         { status: 404 }
       );
     }
     if (payload.id !== account._id.toString()) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         { success: false, message: "Nicht berechtigt" },
         { status: 403 }
@@ -63,6 +72,8 @@ export async function PATCH(request, context) {
         email: reqBody.email,
       });
       if (validateAccountEmail) {
+        await session.abortTransaction();
+        session.endSession();
         return NextResponse.json(
           { success: false, message: "E-Mail ist bereits registriert" },
           { status: 409 }
@@ -80,7 +91,8 @@ export async function PATCH(request, context) {
           emailVerified:
             reqBody.email === account.email ? account.emailVerified : false,
         },
-      }
+      },
+      { session }
     ).exec();
 
     if (reqBody.email !== account.email) {
@@ -103,15 +115,23 @@ export async function PATCH(request, context) {
         throw new Error();
       }
 
+      await session.commitTransaction();
+      session.endSession();
+
       return NextResponse.json(
         { success: true },
         { status: 200, headers: { accessToken: `Bearer ${newJwtToken}` } }
       );
     } else {
+      await session.commitTransaction();
+      session.endSession();
+
       return NextResponse.json({ success: true }, { status: 200 });
     }
   } catch (error) {
     console.error(error);
+    await session.abortTransaction();
+    session.endSession();
     return NextResponse.json(
       { success: false, message: "Es gab einen Fehler beim aktualisieren" },
       { status: 500 }
