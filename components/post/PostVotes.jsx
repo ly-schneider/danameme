@@ -2,7 +2,7 @@
 
 import { mdiArrowDownBold, mdiArrowDownBoldOutline, mdiArrowUpBold, mdiArrowUpBoldOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import BackendUrl from "./utils/BackendUrl";
+import BackendUrl from "../utils/BackendUrl";
 import { useEffect, useState } from "react";
 
 export default function PostVotes({ post, session }) {
@@ -50,7 +50,7 @@ export default function PostVotes({ post, session }) {
       });
 
       if (!res.ok || res.status !== 200) {
-        console.error("Fehler beim Abstimmen")
+        console.error("Es gab einen Fehler beim abstimmen");
 
         // Reset the post object
         if (type === "up") {
@@ -76,7 +76,7 @@ export default function PostVotes({ post, session }) {
         return
       }
     } catch (error) {
-      console.error(error)
+      console.error("Es gab einen Fehler beim abstimmen");
     }
   }
 

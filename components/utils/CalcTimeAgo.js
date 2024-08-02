@@ -15,5 +15,5 @@ export default function CalcTimeAgo(date) {
   if (minutes > 0) {
     return `vor ${minutes} Minute${minutes > 1 ? "n" : ""}`;
   }
-  return `vor ${seconds} Sekunde${seconds > 1 ? "n" : ""}`;
+  return `gerade eben`;
 }

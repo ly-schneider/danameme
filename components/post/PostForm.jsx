@@ -2,17 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Spinner from "./utils/Spinner";
+import Spinner from "../utils/Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import BackendUrl from "./utils/BackendUrl";
+import BackendUrl from "../utils/BackendUrl";
 
-export default function PostForm({ session }) {
+export default function PostForm({ post = null, session }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    title: "",
-    image: null,
+    title: post ? post.title : "",
+    image: post ? post.image : null,
   });
   const [errors, setErrors] = useState({
     submit: "",
@@ -57,14 +57,18 @@ export default function PostForm({ session }) {
 
     try {
       // Turn the File Object into a data:image URL
-      const imageUrl = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(formData.image);
-      });
+      let imageUrl = formData.image;
 
-      const res = await fetch(`${BackendUrl()}/posts`, {
-        method: "POST",
+      if (formData.image && formData.image instanceof File) {
+        imageUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(formData.image);
+        });
+      }
+
+      const res = await fetch(`${BackendUrl()}/posts${post ? "/id/" + post._id : ""}`, {
+        method: post ? "PATCH" : "POST",
         headers: {
           "Authorization": `Bearer ${session.accessToken}`,
         },
@@ -74,7 +78,7 @@ export default function PostForm({ session }) {
         }),
       });
 
-      if (!res.ok || res.status !== 201) {
+      if (!res.ok) {
         throw new Error();
       }
 
@@ -150,7 +154,7 @@ export default function PostForm({ session }) {
         {formData.image && (
           <div>
             <img
-              src={URL.createObjectURL(formData.image)}
+              src={formData.image && formData.image instanceof File ? URL.createObjectURL(formData.image) : formData.image}
               alt="Vorschau"
               className="w-auto max-h-[28rem] rounded-[10px]"
             />
@@ -161,7 +165,7 @@ export default function PostForm({ session }) {
         )}
         <button className="btn btn-primary w-full" type="submit">
           <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
-          Posten
+          {post ? "Speichern" : "Posten"}
         </button>
       </form>
     </div>

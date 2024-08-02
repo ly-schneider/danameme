@@ -1,22 +1,17 @@
 import mongoose from "mongoose";
-import { comment } from "postcss";
 
-const PostSchema = new mongoose.Schema({
+const CommentSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     required: true,
   },
-  title: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: false,
-  },
   account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Account",
+    required: true,
+  },
+  content: {
+    type: String,
     required: true,
   },
   upvotes: [
@@ -31,12 +26,7 @@ const PostSchema = new mongoose.Schema({
       ref: "Account",
     },
   ],
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
 });
 
-export default mongoose.models.Post || mongoose.model("Post", PostSchema);
+export default mongoose.models.Comment ||
+  mongoose.model("Comment", CommentSchema);

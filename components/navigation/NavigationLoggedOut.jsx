@@ -44,9 +44,9 @@ export default function NavigationLoggedOut() {
           </ul>
           <div className="mt-auto">
             <div className="flex flex-row flex-wrap gap-4 gap-y-1 mt-4">
-              <Link href="/impressum" className="text text-sm text-muted hover:underline">Impressum</Link>
-              <Link href="/datenschutz" className="text text-sm text-muted hover:underline">Datenschutz</Link>
-              <Link target="_blank" href="https://github.com/ly-schneider/danameme" className="text text-sm text-muted hover:underline">GitHub</Link>
+              <Link onClick={closeSheet} href="/impressum" className="text text-sm text-muted hover:underline">Impressum</Link>
+              <Link onClick={closeSheet} href="/datenschutz" className="text text-sm text-muted hover:underline">Datenschutz</Link>
+              <Link onClick={closeSheet} target="_blank" href="https://github.com/ly-schneider/danameme" className="text text-sm text-muted hover:underline">GitHub</Link>
             </div>
           </div>
         </div>

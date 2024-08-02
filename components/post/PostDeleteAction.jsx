@@ -1,9 +1,9 @@
 "use client";
 
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import BackendUrl from "./utils/BackendUrl";
+import BackendUrl from "../utils/BackendUrl";
 import { useRouter } from "next/navigation";
 
 export default function PostDeleteAction({ post, session }) {

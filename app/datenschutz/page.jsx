@@ -8,7 +8,7 @@ export async function generateMetadata() {
 
 export default async function DatenschutzPage() {
   return (
-    <main className="mb-20 w-full">
+    <main>
       <div className="max-w-2xl mx-auto w-full">
         <h1 className="title text-center">
           Datenschutzerklärung

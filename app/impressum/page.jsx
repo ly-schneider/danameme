@@ -8,7 +8,7 @@ export async function generateMetadata() {
 
 export default async function ImpressumPage() {
   return (
-    <main className="mb-20 w-full">
+    <main>
       <div className="max-w-2xl mx-auto w-full">
         <h1 className="title text-4xl text-center">Impressum</h1>
         <section className="mt-12 flex flex-col gap-12">

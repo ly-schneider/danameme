@@ -1,4 +1,4 @@
-import PostForm from "@/components/PostForm";
+import PostForm from "@/components/post/PostForm";
 import { getSession } from "@/lib/Session";
 
 export async function generateMetadata() {

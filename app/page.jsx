@@ -1,4 +1,4 @@
-import Post from "@/components/Post";
+import Post from "@/components/post/Post";
 import BackendUrl from "@/components/utils/BackendUrl";
 import { getSession } from "@/lib/Session";
 
@@ -46,12 +46,14 @@ export default async function HomePage() {
   }
 
   return (
-    <main>
-      <section className="flex flex-col max-w-md w-full mx-auto gap-16">
+    <main className="max-w-md w-full mx-auto">
+      <ul className="flex flex-col gap-16">
         {posts.map((post) => (
-          <Post key={post._id} post={post} session={session} />
+          <li key={post._id}>
+            <Post post={post} session={session} />
+          </li>
         ))}
-      </section>
+      </ul>
     </main>
   );
 }

@@ -21,26 +21,11 @@ export async function GET(request) {
   }
 
   try {
-    let posts = await Post.find().sort({
-      createdAt: -1,
-    });
-
-    posts = await Promise.all(
-      posts.map(async (post) => {
-        let account = await Account.findOne({ _id: post.accountId });
-        account.password = undefined;
-        account.emailVerified = undefined;
-        account.firstname = undefined;
-        account.lastname = undefined;
-        account.email = undefined;
-        return {
-          ...post.toObject(),
-          account: account,
-        };
+    const posts = await Post.find()
+      .sort({
+        createdAt: -1,
       })
-    );
-
-    console.log(posts);
+      .populate("account", "username profileImage", Account);
 
     return NextResponse.json({ success: true, data: posts }, { status: 200 });
   } catch (error) {
@@ -111,7 +96,7 @@ export async function POST(request) {
     const post = new Post({
       createdAt: Now(),
       title: reqBody.title,
-      accountId: payload.id,
+      account: payload.id,
     });
 
     await post.save({ session });

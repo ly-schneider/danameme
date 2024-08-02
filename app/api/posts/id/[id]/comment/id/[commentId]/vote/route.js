@@ -1,33 +1,34 @@
 import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
+import Comment from "@/model/Comment";
 import Post from "@/model/Post";
 import { NextResponse } from "next/server";
 
-async function handleVote(post, userId, voteType) {
-  const upvoteIndex = post.upvotes.indexOf(userId);
-  const downvoteIndex = post.downvotes.indexOf(userId);
+async function handleVote(comment, userId, voteType) {
+  const upvoteIndex = comment.upvotes.indexOf(userId);
+  const downvoteIndex = comment.downvotes.indexOf(userId);
 
   if (voteType === "up") {
     if (upvoteIndex !== -1) {
-      post.upvotes.splice(upvoteIndex, 1);
+      comment.upvotes.splice(upvoteIndex, 1);
     } else {
       if (downvoteIndex !== -1) {
-        post.downvotes.splice(downvoteIndex, 1);
+        comment.downvotes.splice(downvoteIndex, 1);
       }
-      post.upvotes.push(userId);
+      comment.upvotes.push(userId);
     }
   } else if (voteType === "down") {
     if (downvoteIndex !== -1) {
-      post.downvotes.splice(downvoteIndex, 1);
+      comment.downvotes.splice(downvoteIndex, 1);
     } else {
       if (upvoteIndex !== -1) {
-        post.upvotes.splice(upvoteIndex, 1);
+        comment.upvotes.splice(upvoteIndex, 1);
       }
-      post.downvotes.push(userId);
+      comment.downvotes.push(userId);
     }
   }
 
-  await post.save();
+  await comment.save();
 }
 
 export async function POST(request, context) {
@@ -35,6 +36,7 @@ export async function POST(request, context) {
 
   const reqBody = await request.json();
   const id = context.params.id;
+  const commentId = context.params.commentId;
   const jwtToken = request.headers.get("authorization");
   const payload = await decrypt(jwtToken);
 
@@ -61,7 +63,15 @@ export async function POST(request, context) {
       );
     }
 
-    await handleVote(post, payload.id, reqBody.type);
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return NextResponse.json(
+        { success: false, message: "Kommentar nicht gefunden" },
+        { status: 404 }
+      );
+    }
+
+    await handleVote(comment, payload.id, reqBody.type);
 
     return NextResponse.json({ success: true });
   } catch (error) {
