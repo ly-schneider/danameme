@@ -63,7 +63,7 @@ export default function PostForm({ session }) {
         reader.readAsDataURL(formData.image);
       });
 
-      const res = await fetch(`${BackendUrl()}/post`, {
+      const res = await fetch(`${BackendUrl()}/posts`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${session.accessToken}`,
@@ -152,7 +152,7 @@ export default function PostForm({ session }) {
             <img
               src={URL.createObjectURL(formData.image)}
               alt="Vorschau"
-              className="w-auto max-h-[28rem] rounded-[15px]"
+              className="w-auto max-h-[28rem] rounded-[10px]"
             />
             <button onClick={() => setFormData({ ...formData, image: null })} className="mt-2 cursor-pointer text text-secondary hover:underline">
               Bild entfernen

@@ -1,6 +1,6 @@
 import BackendUrl from "@/components/utils/BackendUrl";
 import Now from "@/components/utils/TimeNow";
-import DBConnect from "@/lib/Mongoose";
+import DBConnect from "@/lib/mongoose";
 import { encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import { genSalt, hash } from "bcrypt";

@@ -7,6 +7,54 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
+export async function GET(request) {
+  await DBConnect();
+
+  const jwtToken = request.headers.get("authorization");
+  const payload = await decrypt(jwtToken);
+
+  if (!payload) {
+    return NextResponse.json(
+      { success: false, message: "Nicht berechtigt" },
+      { status: 403 }
+    );
+  }
+
+  try {
+    let posts = await Post.find().sort({
+      createdAt: -1,
+    });
+
+    posts = await Promise.all(
+      posts.map(async (post) => {
+        let account = await Account.findOne({ _id: post.accountId });
+        account.password = undefined;
+        account.emailVerified = undefined;
+        account.firstname = undefined;
+        account.lastname = undefined;
+        account.email = undefined;
+        return {
+          ...post.toObject(),
+          account: account,
+        };
+      })
+    );
+
+    console.log(posts);
+
+    return NextResponse.json({ success: true, data: posts }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Es gab einen Fehler beim laden der Posts",
+      },
+      { status: 500 }
+    );
+  }
+}
+
 function bufferToStream(buffer) {
   const { Readable } = require("stream");
   const stream = new Readable();
