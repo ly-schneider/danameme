@@ -137,7 +137,7 @@ export async function POST(request) {
         }
       );
 
-      imageUrl = `${process.env.IMAGE_URL}/posts/${file.name}-${time}.${
+      imageUrl = `https://${process.env.IMAGE_URL}/posts/${file.name}-${time}.${
         file.type.split("/")[1]
       }`;
       await Post.updateOne(

@@ -10,7 +10,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "devdanameme.imgix.net",
+        hostname: process.env.IMAGE_URL,
         port: "",
         pathname: "**",
       },

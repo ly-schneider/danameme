@@ -143,7 +143,7 @@ export async function PATCH(request, context) {
         }
       );
 
-      imageUrl = `${process.env.IMAGE_URL}/posts/${file.name}-${time}.${
+      imageUrl = `https://${process.env.IMAGE_URL}/posts/${file.name}-${time}.${
         file.type.split("/")[1]
       }`;
 

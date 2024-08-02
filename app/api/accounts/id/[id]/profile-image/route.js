@@ -103,6 +103,7 @@ export async function PATCH(request, context) {
     );
 
     const imageUrl =
+      "https://" +
       process.env.IMAGE_URL +
       "/profile-images/" +
       file.name +

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "./lib/Session";
 
-// Define paths for redirection logic
 export const blacklistPathsUnauthenticated = [
   "/",
   "/email-verifizieren",
@@ -13,7 +12,7 @@ export const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
 export async function middleware(request) {
   const pathname = request.nextUrl.pathname;
 
-  // Regex to skip API routes, static files, and other paths
+  // Regex to skip API routes, static files, and other paths that should always be accessible
   const matchRegex =
     /^\/((?!api|_next|favicon.ico|fonts|images|impressum|datenschutz|passwort-).*)$/;
   if (!matchRegex.test(pathname)) {
