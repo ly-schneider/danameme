@@ -1,5 +1,6 @@
 import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
+import Account from "@/model/Account";
 import Comment from "@/model/Comment";
 import Post from "@/model/Post";
 import { NextResponse } from "next/server";
@@ -8,27 +9,38 @@ async function handleVote(comment, userId, voteType) {
   const upvoteIndex = comment.upvotes.indexOf(userId);
   const downvoteIndex = comment.downvotes.indexOf(userId);
 
+  const poster = await Account.findById(comment.account);
+
   if (voteType === "up") {
     if (upvoteIndex !== -1) {
       comment.upvotes.splice(upvoteIndex, 1);
+      poster.karma -= 1;
     } else {
       if (downvoteIndex !== -1) {
         comment.downvotes.splice(downvoteIndex, 1);
+        poster.karma += 1;
       }
       comment.upvotes.push(userId);
+      poster.karma += 1;
     }
   } else if (voteType === "down") {
     if (downvoteIndex !== -1) {
       comment.downvotes.splice(downvoteIndex, 1);
+      poster.karma += 1;
     } else {
       if (upvoteIndex !== -1) {
         comment.upvotes.splice(upvoteIndex, 1);
+        poster.karma -= 1;
       }
       comment.downvotes.push(userId);
+      poster.karma -= 1;
     }
   }
 
   await comment.save();
+  if (userId !== poster._id.toString()) {
+    await poster.save();
+  }
 }
 
 export async function POST(request, context) {

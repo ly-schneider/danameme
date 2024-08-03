@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { getSession } from "./lib/Session";
 
-export const blacklistPathsUnauthenticated = [
+const blacklistPathsUnauthenticated = [
   "/",
   "/email-verifizieren",
   "/einstellungen",
-  "/posten",
 ];
-export const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
+const blacklistPathsUnauthenticatedRegex = /^\/((?!profil|post).*)$/;
+const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
 
 export async function middleware(request) {
   const pathname = request.nextUrl.pathname;
@@ -34,7 +34,10 @@ export async function middleware(request) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   } else {
-    if (blacklistPathsUnauthenticated.includes(pathname)) {
+    if (
+      blacklistPathsUnauthenticated.includes(pathname) ||
+      !blacklistPathsUnauthenticatedRegex.test(pathname)
+    ) {
       return NextResponse.redirect(new URL("/anmelden", request.url));
     }
   }

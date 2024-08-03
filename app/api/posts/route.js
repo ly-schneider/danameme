@@ -2,6 +2,7 @@ import Now from "@/components/utils/TimeNow";
 import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
 import Account from "@/model/Account";
+import Comment from "@/model/Comment";
 import Post from "@/model/Post";
 import { BlobServiceClient } from "@azure/storage-blob";
 import mongoose from "mongoose";
@@ -27,7 +28,26 @@ export async function GET(request) {
       })
       .populate("account", "username profileImage", Account);
 
-    return NextResponse.json({ success: true, data: posts }, { status: 200 });
+    const postIds = posts.map((post) => post._id);
+    const comments = await Comment.find({ post: { $in: postIds } });
+
+    const commentsByPostId = comments.reduce((acc, comment) => {
+      acc[comment.post] = acc[comment.post] || [];
+      acc[comment.post].push(comment);
+      return acc;
+    }, {});
+
+    const postsWithComments = posts.map((post) => {
+      return {
+        ...post.toObject(),
+        comments: commentsByPostId[post._id] || [],
+      };
+    });
+
+    return NextResponse.json(
+      { success: true, data: postsWithComments },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

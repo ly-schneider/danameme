@@ -34,6 +34,12 @@ export async function generateMetadata({ params }) {
     }
   }
 
+  if (!post) {
+    return {
+      title: "Post | DANAMEME",
+    };
+  }
+
   return {
     title: `${post.title} - ${post.account.username} | Post | DANAMEME`,
   };

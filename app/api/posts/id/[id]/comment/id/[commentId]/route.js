@@ -96,17 +96,6 @@ export async function DELETE(request, context) {
 
     await Comment.findByIdAndDelete(commentId);
 
-    // Remove from post.comments array
-    const post = await Post.findByIdAndUpdate(id, {
-      $pull: { comments: commentId },
-    });
-    if (!post) {
-      return NextResponse.json(
-        { success: false, message: "Post nicht gefunden" },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error(error);

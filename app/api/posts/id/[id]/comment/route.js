@@ -38,15 +38,12 @@ export async function POST(request, context) {
 
     const comment = new Comment({
       createdAt: Now(),
+      post: id,
       account: payload.id,
       content: reqBody.content,
     });
 
     await comment.save();
-
-    post.comments.push(comment._id);
-
-    await post.save();
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

@@ -5,6 +5,11 @@ const CommentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  post: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Post",
+    required: true,
+  },
   account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Account",

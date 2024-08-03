@@ -31,12 +31,6 @@ const PostSchema = new mongoose.Schema({
       ref: "Account",
     },
   ],
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
 });
 
 export default mongoose.models.Post || mongoose.model("Post", PostSchema);

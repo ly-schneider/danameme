@@ -25,16 +25,7 @@ export async function GET(request, context) {
   try {
     const post = await Post.findById(id)
       .populate("account", "username profileImage", Account)
-      .populate({
-        path: "comments",
-        populate: {
-          path: "account",
-          select: "username profileImage",
-          model: Account,
-        },
-        select: "createdAt account content upvotes downvotes",
-        model: Comment,
-      });
+      .exec();
     if (!post) {
       return NextResponse.json(
         { success: false, message: "Post nicht gefunden" },
@@ -42,7 +33,21 @@ export async function GET(request, context) {
       );
     }
 
-    return NextResponse.json({ success: true, data: post });
+    const comments = await Comment.find({ post: id })
+      .populate({
+        path: "account",
+        select: "username profileImage",
+        model: Account,
+      })
+      .select("createdAt account content upvotes downvotes")
+      .exec();
+
+    const body = {
+      ...post.toObject(),
+      comments,
+    };
+
+    return NextResponse.json({ success: true, data: body });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -221,6 +226,8 @@ export async function DELETE(request, context) {
     }
 
     await Post.findByIdAndDelete(id, { session });
+
+    await Comment.deleteMany({ post: id }, { session });
 
     if (post.image !== null) {
       const blobServiceClient = BlobServiceClient.fromConnectionString(

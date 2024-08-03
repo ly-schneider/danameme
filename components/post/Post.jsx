@@ -40,13 +40,15 @@ export default function Post({ post, session }) {
         <div>
           <h4 className="text text-xl font-bold">{post.title}</h4>
         </div>
-        <div>
-          <img
-            src={post.image + "?auto=format&auto=compress&cs=srgb"}
-            alt={`Bild von ${post.title}`}
-            className="w-auto max-h-[28rem] rounded-[10px]"
-          />
-        </div>
+        {post.image && (
+          <div>
+            <img
+              src={post.image + "?auto=format&auto=compress&cs=srgb"}
+              alt={`Bild von ${post.title}`}
+              className="w-auto max-h-[28rem] rounded-[10px]"
+            />
+          </div>
+        )}
       </Link>
       <div className="flex flex-row items-center gap-3">
         <PostVotes post={post} session={session} />

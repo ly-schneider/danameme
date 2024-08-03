@@ -1,6 +1,7 @@
 import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
 import Account from "@/model/Account";
+import Comment from "@/model/Comment";
 import Post from "@/model/Post";
 import { NextResponse } from "next/server";
 
@@ -34,14 +35,29 @@ export async function GET(request, context) {
     account.__v = undefined;
 
     const posts = await Post.find({ account: account._id })
-      .sort({
-        createdAt: -1,
-      })
-      .populate("account", "username profileImage", Account);
+      .sort({ createdAt: -1 })
+      .populate("account", "username profileImage", Account)
+      .exec();
+
+    const postIds = posts.map((post) => post._id);
+    const comments = await Comment.find({ post: { $in: postIds } });
+
+    const commentsByPostId = comments.reduce((acc, comment) => {
+      acc[comment.post] = acc[comment.post] || [];
+      acc[comment.post].push(comment);
+      return acc;
+    }, {});
+
+    const postsWithComments = posts.map((post) => {
+      return {
+        ...post.toObject(),
+        comments: commentsByPostId[post._id] || [],
+      };
+    });
 
     const body = {
       account: account,
-      posts: posts,
+      posts: postsWithComments,
     };
 
     return NextResponse.json({ success: true, data: body });
