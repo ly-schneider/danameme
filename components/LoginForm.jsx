@@ -23,9 +23,64 @@ export default function LoginForm() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
+
+    if (formData.email === "") {
+      setErrors({ email: "Bitte gib deine E-Mail Adresse ein" });
+      setLoading(false);
+      return;
+    }
+
+    if (step === 1) {
+      await handleCheckEmail();
+    } else {
+      await handleLogin();
+    }
+  }
+
+  async function handleCheckEmail() {
+    setErrors({});
+
+    try {
+      const res = await fetch(`${BackendUrl()}/auth/email?email=${formData.email}`, {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        setLoading(false);
+
+        if (res.status === 404) {
+          setErrors({ email: "E-Mail Adresse ist nicht registriert" });
+          return;
+        }
+
+        throw new Error();
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        if (data.type === "migrate") {
+          router.push("/passwort-vergessen?migrate=true&email=" + formData.email);
+          return;
+        }
+
+        setStep(2);
+        setLoading(false);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      setErrors({ submit: "Es gab einen Fehler" });
+      setLoading(false);
+    }
+  }
+
+  async function handleLogin() {
     setLoading(true);
 
     let newErrors = {};
@@ -122,41 +177,43 @@ export default function LoginForm() {
             {errors.email}
           </span>
         </div>
-        <div className="flex flex-col relative">
-          <div className="flex flex-col form-item relative">
-            <input
-              className={
-                "bg-background " +
-                (errors.password ? "border-error" : "border-text")
-              }
-              type={showPassword ? "text" : "password"}
-              name="password"
-              autoComplete="new-password"
-              id="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <label
-              className={
-                "text font-normal " + (formData.password !== "" ? "up" : "")
-              }
-              htmlFor="password"
-            >
-              Passwort
-            </label>
-            <FontAwesomeIcon
-              className="text-text cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 z-10"
-              icon={showPassword ? faEyeSlash : faEye}
-              onClick={() => setShowPassword(!showPassword)}
-            />
+        {step === 2 && (
+          <div className="flex flex-col relative">
+            <div className="flex flex-col form-item relative">
+              <input
+                className={
+                  "bg-background " +
+                  (errors.password ? "border-error" : "border-text")
+                }
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="new-password"
+                id="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <label
+                className={
+                  "text font-normal " + (formData.password !== "" ? "up" : "")
+                }
+                htmlFor="password"
+              >
+                Passwort
+              </label>
+              <FontAwesomeIcon
+                className="text-text cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 z-10"
+                icon={showPassword ? faEyeSlash : faEye}
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            </div>
+            <span className="mt-1 text-sm text text-error">
+              {errors.password}
+            </span>
           </div>
-          <span className="mt-1 text-sm text text-error">
-            {errors.password}
-          </span>
-        </div>
+        )}
         <button className="btn btn-primary w-full" type="submit">
           <Spinner className={"fill-text transition-default " + (loading ? "mr-3" : "hidden")} />
-          Anmelden
+          {step === 1 ? "Weiter" : "Anmelden"}
         </button>
         <div className="flex flex-row justify-between">
           <Link href="/registrieren" className="text text-secondary hover:underline">

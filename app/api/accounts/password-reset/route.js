@@ -60,7 +60,13 @@ export async function GET(request) {
       );
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        type: passwordReset.isMigrating ? "migration" : "reset",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -81,6 +87,13 @@ export async function POST(request) {
   if (!reqBody.email) {
     return NextResponse.json(
       { success: false, message: "E-Mail muss vorhanden sein" },
+      { status: 400 }
+    );
+  }
+
+  if (reqBody.isMigrating === undefined || reqBody.isMigrating === null) {
+    return NextResponse.json(
+      { success: false, message: "Migration muss vorhanden sein" },
       { status: 400 }
     );
   }
@@ -118,12 +131,13 @@ export async function POST(request) {
           guid: guid,
           email: reqBody.email,
           validUntil: Now().getTime() + 30 * 60 * 1000, // 30 minutes
+          isMigrating: reqBody.isMigrating,
         },
       ],
       { session }
     );
 
-    await sendEmailVerification(reqBody.email, guid);
+    await sendEmailVerification(reqBody.email, guid, reqBody.isMigrating);
 
     await session.commitTransaction();
     session.endSession();
@@ -246,6 +260,7 @@ export async function PATCH(request) {
         {
           $set: {
             password: hashedPassword,
+            emailVerified: true,
           },
         },
         { session }
@@ -270,7 +285,7 @@ export async function PATCH(request) {
   }
 }
 
-async function sendEmailVerification(email, guid) {
+async function sendEmailVerification(email, guid, isMigrating) {
   let htmlContent =
     "<!DOCTYPE html>" +
     '<html lang="de">' +
@@ -364,13 +379,17 @@ async function sendEmailVerification(email, guid) {
     '<div class="wrapper">' +
     '<img src="https://lh3.googleusercontent.com/drive-viewer/AKGpihbZMmkLIRtavkOzmvWv7LwHCBWRLbuvCaWmc2MhgzSwK7LKW885mPG5EgFz340xpd2dgqzh5TPF-pnZ5IKvnWrmko4hIEWqmxs=w1920-h940-rw-v1" alt="DANAMEME Logo" class="brand-logo">' +
     '<div class="container">' +
-    "<p>Klicke auf den Knopf um dein Passwort zurückzusetzen</p>" +
+    "<p>Klicke auf den Knopf um dein Passwort " +
+    (isMigrating ? "zu erstellen" : "zurückzusetzen") +
+    "</p>" +
     '<div class="btn-container">' +
     '<a target="_blank" href="' +
     process.env.NEXT_PUBLIC_API_URL.replace("/api", "") +
     "/passwort-reset?token=" +
     guid +
-    '" class="btn">Passwort zurücksetzen</a>' +
+    '" class="btn">Passwort ' +
+    (isMigrating ? "erstellen" : "zurücksetzen") +
+    "</a>" +
     "<p>Token: " +
     guid +
     "</p>" +
@@ -385,8 +404,8 @@ async function sendEmailVerification(email, guid) {
   await mailgun.messages.create(DOMAIN, {
     to: email,
     from: "DANAMEME <no-reply@danameme.ch>",
-    subject: "Passwort zurücksetzen",
-    text: "Passwort zurücksetzen",
+    subject: `Passwort ${isMigrating ? "erstellen" : "zurücksetzen"}`,
+    text: `Passwort ${isMigrating ? "erstellen" : "zurücksetzen"}`,
     html: htmlContent,
   });
 }

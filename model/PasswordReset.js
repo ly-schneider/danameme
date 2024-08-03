@@ -12,6 +12,10 @@ const PasswordResetSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isMigrating: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default mongoose.models.PasswordReset ||

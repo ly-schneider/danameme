@@ -29,11 +29,7 @@ const AccountSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Passwort darf nicht leer sein"],
-    match: [
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/,
-      "Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten",
-    ],
+    required: false,
   },
   karma: {
     type: Number,

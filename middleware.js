@@ -7,14 +7,18 @@ const blacklistPathsUnauthenticated = [
   "/einstellungen",
 ];
 const blacklistPathsUnauthenticatedRegex = /^\/((?!profil|post).*)$/;
-const blacklistPathsAuthenticated = ["/anmelden", "/registrieren"];
+const blacklistPathsAuthenticated = [
+  "/anmelden",
+  "/registrieren",
+  "/passwort-vergessen",
+];
 
 export async function middleware(request) {
   const pathname = request.nextUrl.pathname;
 
   // Regex to skip API routes, static files, and other paths that should always be accessible
   const matchRegex =
-    /^\/((?!api|_next|favicon.ico|fonts|images|impressum|datenschutz|passwort-).*)$/;
+    /^\/((?!api|_next|favicon.ico|fonts|images|impressum|datenschutz|passwort-reset).*)$/;
   if (!matchRegex.test(pathname)) {
     return NextResponse.next();
   }
