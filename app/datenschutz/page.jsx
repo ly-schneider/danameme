@@ -83,7 +83,7 @@ export default async function DatenschutzPage() {
             <div className="flex flex-col gap-2">
               <h3 className="subtitle">4. Verwendung von Google Analytics</h3>
               <p className="text">
-                Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. Google Analytics verwendet sogenannte "Cookies", Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglichen. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert.
+                Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. Google Analytics verwendet sogenannte &quot;Cookies&quot;, Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglichen. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert.
               </p>
               <ul className="flex flex-col gap-1 [&]:list-disc [&]:ms-5 [&>li]:py-1 text">
                 <li>

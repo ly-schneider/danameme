@@ -205,7 +205,7 @@ export default function ProfileForm() {
               </li>
               <li className={"flex flex-row gap-1.5 items-center " + (usernameChars === null ? "text-muted" : usernameChars === true ? "text-success" : "text-error")}>
                 <FontAwesomeIcon icon={usernameChars ? faCheckCircle : faXmarkCircle} />
-                Nur 'aA', '0-9', '_', '.', '-' erlaubt
+                Nur &apos;aA&apos;, &apos;0-9&apos;, &apos;_&apos;, &apos;.&apos;, &apos;-&apos; erlaubt
               </li>
             </ul>
           )}
