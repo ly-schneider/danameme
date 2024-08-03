@@ -160,14 +160,13 @@ export async function POST(request) {
       imageUrl = `https://${process.env.IMAGE_URL}/posts/${file.name}-${time}.${
         file.type.split("/")[1]
       }`;
-      await Post.updateOne(
-        { _id: post._id },
-        { $set: { image: imageUrl } },
-        { session }
-      );
     }
 
-    post.image = imageUrl;
+    await Post.updateOne(
+      { _id: post._id },
+      { $set: { image: imageUrl } },
+      { session }
+    );
 
     await session.commitTransaction();
     session.endSession();

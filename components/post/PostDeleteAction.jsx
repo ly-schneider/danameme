@@ -20,9 +20,10 @@ export default function PostDeleteAction({ post, session }) {
 
       if (!res.ok || res.status !== 200) {
         console.error("Fehler beim Löschen");
+        return;
       }
 
-      router.refresh();
+      router.push("/");
     } catch (error) {
       console.error("Fehler beim Löschen");
     }
