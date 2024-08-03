@@ -1,5 +1,6 @@
 import Post from "@/components/post/Post";
 import BackendUrl from "@/components/utils/BackendUrl";
+import Spinner from "@/components/utils/Spinner";
 import { getSession } from "@/lib/Session";
 
 export async function generateMetadata() {
@@ -32,15 +33,14 @@ export default async function HomePage() {
       posts = data.data
     } else {
       console.error("Fehler beim Laden der Posts")
-      return
     }
   }
 
 
   if (!posts) {
     return (
-      <main>
-        <h1>Laden...</h1>
+      <main className="w-full flex justify-center">
+        <Spinner className="fill-text w-10 h-10" />
       </main>
     )
   }

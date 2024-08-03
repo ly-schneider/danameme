@@ -4,6 +4,7 @@ import CommentForm from "@/components/comment/CommentForm";
 import Post from "@/components/post/Post";
 import BackendUrl from "@/components/utils/BackendUrl";
 import { getSession } from "@/lib/Session";
+import Spinner from "@/components/utils/Spinner";
 
 export async function generateMetadata({ params }) {
   const session = await getSession();
@@ -62,14 +63,13 @@ export default async function PostDetailPage({ params }) {
       post = data.data
     } else {
       console.error("Fehler beim Laden des Posts")
-      return
     }
   }
 
   if (!post) {
     return (
-      <main>
-        <h1>Laden...</h1>
+      <main className="w-full flex justify-center">
+        <Spinner className="fill-text w-10 h-10" />
       </main>
     )
   }
