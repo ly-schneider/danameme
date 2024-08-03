@@ -43,6 +43,12 @@ export async function generateMetadata({ params }) {
     }
   }
 
+  if (!account) {
+    return {
+      title: "Profil | DANAMEME",
+    }
+  }
+
   return {
     title: `${account.account.username} | Profil | DANAMEME`,
   };
