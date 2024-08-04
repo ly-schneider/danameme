@@ -232,7 +232,7 @@ async function sendEmailVerification(mailgun, email, code) {
     "</head>" +
     "<body>" +
     '<div class="wrapper">' +
-    '<img src="https://lh3.googleusercontent.com/drive-viewer/AKGpihbZMmkLIRtavkOzmvWv7LwHCBWRLbuvCaWmc2MhgzSwK7LKW885mPG5EgFz340xpd2dgqzh5TPF-pnZ5IKvnWrmko4hIEWqmxs=w1920-h940-rw-v1" alt="DANAMEME Logo" class="brand-logo">' +
+    '<img src="https://www.danameme.ch/images/danameme-logo.png" alt="DANAMEME Logo" class="brand-logo">' +
     '<div class="container">' +
     "<p>Gebe den unten stehenden 6-stelligen Code auf der Website ein.</p>" +
     '<h1 class="my numbers">' +

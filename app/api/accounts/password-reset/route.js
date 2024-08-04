@@ -385,7 +385,7 @@ async function sendEmailVerification(mailgun, email, guid, isMigrating) {
     "</head>" +
     "<body>" +
     '<div class="wrapper">' +
-    '<img src="https://lh3.googleusercontent.com/drive-viewer/AKGpihbZMmkLIRtavkOzmvWv7LwHCBWRLbuvCaWmc2MhgzSwK7LKW885mPG5EgFz340xpd2dgqzh5TPF-pnZ5IKvnWrmko4hIEWqmxs=w1920-h940-rw-v1" alt="DANAMEME Logo" class="brand-logo">' +
+    '<img src="https://www.danameme.ch/images/danameme-logo.png" alt="DANAMEME Logo" class="brand-logo">' +
     '<div class="container">' +
     "<p>Klicke auf den Knopf um dein Passwort " +
     (isMigrating ? "zu erstellen" : "zurückzusetzen") +
