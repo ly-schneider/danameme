@@ -10,18 +10,8 @@ resource "azurerm_storage_account" "storage-account-prod" {
   allow_nested_items_to_be_public = false
   is_hns_enabled                  = true
 
-  blob_properties {
-    cors_rule {
-      allowed_origins    = ["*"]
-      allowed_methods    = ["GET"]
-      allowed_headers    = ["*"]
-      exposed_headers    = ["*"]
-      max_age_in_seconds = 200
-    }
-  }
-
   tags = {
-    STAGE = "DEV"
+    STAGE = "PROD"
   }
 }
 
@@ -49,16 +39,6 @@ resource "azurerm_storage_account" "storage-account-dev" {
   account_replication_type        = "LRS"
   allow_nested_items_to_be_public = false
   is_hns_enabled                  = true
-
-  blob_properties {
-    cors_rule {
-      allowed_origins    = ["*"]
-      allowed_methods    = ["GET"]
-      allowed_headers    = ["*"]
-      exposed_headers    = ["*"]
-      max_age_in_seconds = 200
-    }
-  }
 
   tags = {
     STAGE = "DEV"
