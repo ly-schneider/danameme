@@ -1,23 +1,14 @@
 import Now from "@/components/utils/TimeNow";
+import MailgunClient from "@/lib/Mailgun";
 import DBConnect from "@/lib/Mongoose";
 import { decrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import PasswordReset from "@/model/PasswordReset";
 import { genSalt, hash } from "bcrypt";
-import Mailgun from "mailgun.js";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 const saltRounds = 10;
-
-const API_KEY = process.env.MAILGUN_API_KEY;
-const DOMAIN = process.env.MAILGUN_DOMAIN;
-
-const mailgun = new Mailgun(FormData).client({
-  url: "https://api.eu.mailgun.net",
-  username: "api",
-  key: API_KEY,
-});
 
 export async function GET(request) {
   await DBConnect();
@@ -82,6 +73,8 @@ export async function GET(request) {
 export async function POST(request) {
   await DBConnect();
 
+  const mailgun = MailgunClient();
+
   const reqBody = await request.json();
 
   if (!reqBody.email) {
@@ -137,7 +130,22 @@ export async function POST(request) {
       { session }
     );
 
-    await sendEmailVerification(reqBody.email, guid, reqBody.isMigrating);
+    if (!mailgun) {
+      await session.commitTransaction();
+      session.endSession();
+
+      console.error(
+        "Mailgun API Key or Domain not set - Skipping email delivery\nLook in database for guid"
+      );
+      return NextResponse.json({ success: true });
+    } else {
+      await sendEmailVerification(
+        mailgun,
+        reqBody.email,
+        guid,
+        reqBody.isMigrating
+      );
+    }
 
     await session.commitTransaction();
     session.endSession();
@@ -285,7 +293,7 @@ export async function PATCH(request) {
   }
 }
 
-async function sendEmailVerification(email, guid, isMigrating) {
+async function sendEmailVerification(mailgun, email, guid, isMigrating) {
   let htmlContent =
     "<!DOCTYPE html>" +
     '<html lang="de">' +
@@ -401,7 +409,7 @@ async function sendEmailVerification(email, guid, isMigrating) {
     "</body>" +
     "</html>";
 
-  await mailgun.messages.create(DOMAIN, {
+  await mailgun.mailgun.messages.create(mailgun.domain, {
     to: email,
     from: "DANAMEME <no-reply@danameme.ch>",
     subject: `Passwort ${isMigrating ? "erstellen" : "zurücksetzen"}`,

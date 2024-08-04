@@ -1,23 +1,16 @@
 import Now from "@/components/utils/TimeNow";
+import MailgunClient from "@/lib/Mailgun";
 import DBConnect from "@/lib/Mongoose";
 import { decrypt, encrypt } from "@/lib/Session";
 import Account from "@/model/Account";
 import EmailVerification from "@/model/EmailVerification";
-import Mailgun from "mailgun.js";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
-const API_KEY = process.env.MAILGUN_API_KEY;
-const DOMAIN = process.env.MAILGUN_DOMAIN;
-
-const mailgun = new Mailgun(FormData).client({
-  url: "https://api.eu.mailgun.net",
-  username: "api",
-  key: API_KEY,
-});
-
 export async function POST(request) {
   await DBConnect();
+
+  const mailgun = MailgunClient();
 
   const jwtToken = request.headers.get("authorization");
 
@@ -53,7 +46,17 @@ export async function POST(request) {
       { session }
     );
 
-    await sendEmailVerification(payload.email, code);
+    if (!mailgun) {
+      await session.commitTransaction();
+      session.endSession();
+
+      console.error(
+        "Mailgun API Key or Domain not set - Skipping email delivery\nLook in database for OTP"
+      );
+      return NextResponse.json({ success: true });
+    } else {
+      await sendEmailVerification(mailgun, payload.email, code);
+    }
 
     await session.commitTransaction();
     session.endSession();
@@ -158,7 +161,7 @@ export async function PATCH(request) {
   }
 }
 
-async function sendEmailVerification(email, code) {
+async function sendEmailVerification(mailgun, email, code) {
   let htmlContent =
     "<!DOCTYPE html>" +
     '<html lang="de">' +
@@ -242,7 +245,7 @@ async function sendEmailVerification(email, code) {
     "</body>" +
     "</html>";
 
-  await mailgun.messages.create(DOMAIN, {
+  await mailgun.mailgun.messages.create(mailgun.domain, {
     to: email,
     from: "DANAMEME <no-reply@danameme.ch>",
     subject: code + " ist dein DANAMEME Bestätigungscode",
