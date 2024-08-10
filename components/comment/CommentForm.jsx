@@ -51,7 +51,7 @@ export default function CommentForm({ post, session, comment = null, setIsEditin
 
       setContent("");
       setLoading(false);
-      router.refresh();
+      window.location.href = `/?post=${post._id}`;
 
       if (setIsEditing) {
         setIsEditing(false);

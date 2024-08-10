@@ -1,3 +1,4 @@
+import ContainerInner from "@/components/ContainerInner";
 import EmailVerification from "@/components/EmailVerification";
 import { getSession } from "@/lib/Session";
 import { redirect } from "next/navigation";
@@ -15,11 +16,13 @@ export default async function RegistrierenPage() {
   }
 
   return (
-    <main className="mt-12">
-      <section className="flex flex-col max-w-md w-full mx-auto">
-        <h1 className="title">E-Mail Adresse verifizieren</h1>
-        <EmailVerification session={session} />
-      </section>
-    </main>
+    <ContainerInner>
+      <main className="mt-12">
+        <section className="flex flex-col max-w-md w-full mx-auto">
+          <h1 className="title">E-Mail Adresse verifizieren</h1>
+          <EmailVerification session={session} />
+        </section>
+      </main>
+    </ContainerInner>
   );
 }

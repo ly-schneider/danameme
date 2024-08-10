@@ -1,4 +1,6 @@
+import ContainerInner from "@/components/ContainerInner";
 import Post from "@/components/post/Post";
+import PostList from "@/components/post/PostList";
 import BackendUrl from "@/components/utils/BackendUrl";
 import Spinner from "@/components/utils/Spinner";
 import { getSession } from "@/lib/Session";
@@ -39,21 +41,19 @@ export default async function HomePage() {
 
   if (!posts) {
     return (
-      <main className="w-full flex justify-center">
-        <Spinner className="fill-text w-10 h-10" />
-      </main>
+      <ContainerInner>
+        <main className="w-full flex justify-center">
+          <Spinner className="fill-text w-10 h-10" />
+        </main>
+      </ContainerInner>
     )
   }
 
   return (
-    <main className="max-w-md w-full mx-auto">
-      <ul className="flex flex-col gap-16">
-        {posts.map((post) => (
-          <li key={post._id}>
-            <Post post={post} session={session} />
-          </li>
-        ))}
-      </ul>
-    </main>
+    <ContainerInner margin={false}>
+      <main className="max-w-5xl w-full mx-auto h-screen">
+        <PostList posts={posts} session={session} />
+      </main>
+    </ContainerInner>
   );
 }

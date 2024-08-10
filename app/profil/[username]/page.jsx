@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Spinner from "@/components/utils/Spinner";
+import ContainerInner from "@/components/ContainerInner";
 
 export async function generateMetadata({ params }) {
   const session = await getSession();
@@ -83,49 +84,53 @@ export default async function ProfileDetailPage({ params }) {
 
   if (!account) {
     return (
-      <main className="w-full flex justify-center">
-        <Spinner className="fill-text w-10 h-10" />
-      </main>
+      <ContainerInner>
+        <main className="w-full flex justify-center">
+          <Spinner className="fill-text w-10 h-10" />
+        </main>
+      </ContainerInner>
     )
   }
 
   return (
-    <main className="max-w-md w-full mx-auto">
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-row items-center gap-4">
-            <ProfileImage src={account.account.profileImage} width={80} height={80} className="" alt={`Profilbild von ${account.account.username}`} />
-            <h1 className="title text-3xl font-bold">{account.account.username}</h1>
+    <ContainerInner>
+      <main className="max-w-md w-full mx-auto">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center gap-4">
+              <ProfileImage src={account.account.profileImage} width={80} height={80} className="" alt={`Profilbild von ${account.account.username}`} />
+              <h1 className="title text-3xl font-bold">{account.account.username}</h1>
+            </div>
+            {session && session.user.id === account.account._id && (
+              <Link href="/einstellungen?page=2">
+                <Icon path={mdiCogOutline} size={1} className="text-muted" />
+              </Link>
+            )}
           </div>
-          {session && session.user.id === account.account._id && (
-            <Link href="/einstellungen?page=2">
-              <Icon path={mdiCogOutline} size={1} className="text-muted" />
-            </Link>
-          )}
+          <div>
+            <p className="text text-muted text-sm">Beigetreten {CalcCreationDate(account.account.createdAt)}</p>
+          </div>
+          <div className="flex flex-row gap-2 items-center">
+            <p className="text text-xl font-semibold">
+              {account.account.karma} Karma
+            </p>
+            <Popover>
+              <PopoverTrigger><Icon path={mdiInformationOutline} size={0.8} className="text" /></PopoverTrigger>
+              <PopoverContent>
+                Karma kannst du durch Upvotes von Kommentaren und Posts sammeln die du erstellt hast.<br />Je mehr Upvotes, desto mehr Karma.<br /><br />Aber Vorsicht: Downvotes können auch Karma abziehen.
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-        <div>
-          <p className="text text-muted text-sm">Beigetreten {CalcCreationDate(account.account.createdAt)}</p>
-        </div>
-        <div className="flex flex-row gap-2 items-center">
-          <p className="text text-xl font-semibold">
-            {account.account.karma} Karma
-          </p>
-          <Popover>
-            <PopoverTrigger><Icon path={mdiInformationOutline} size={0.8} className="text" /></PopoverTrigger>
-            <PopoverContent>
-              Karma kannst du durch Upvotes von Kommentaren und Posts sammeln die du erstellt hast.<br />Je mehr Upvotes, desto mehr Karma.<br /><br />Aber Vorsicht: Downvotes können auch Karma abziehen.
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
-      <Separator className="bg-muted my-6" />
-      <ul className="flex flex-col gap-16">
-        {account.posts.map((post) => (
-          <li key={post._id}>
-            <Post post={post} session={session} />
-          </li>
-        ))}
-      </ul>
-    </main>
+        <Separator className="bg-muted my-6" />
+        <ul className="flex flex-col gap-16">
+          {account.posts.map((post) => (
+            <li key={post._id}>
+              <Post post={post} session={session} />
+            </li>
+          ))}
+        </ul>
+      </main>
+    </ContainerInner>
   )
 }

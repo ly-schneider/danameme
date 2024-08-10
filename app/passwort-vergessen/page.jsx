@@ -1,3 +1,4 @@
+import ContainerInner from "@/components/ContainerInner";
 import ForgotPassword from "@/components/ForgotPassword";
 import { Suspense } from "react";
 
@@ -9,12 +10,14 @@ export async function generateMetadata() {
 
 export default async function ForgotPasswordPage() {
   return (
-    <main className="mt-12">
-      <section className="flex flex-col max-w-md w-full mx-auto">
-        <Suspense>
-          <ForgotPassword />
-        </Suspense>
-      </section>
-    </main>
+    <ContainerInner>
+      <main className="mt-12">
+        <section className="flex flex-col max-w-md w-full mx-auto">
+          <Suspense>
+            <ForgotPassword />
+          </Suspense>
+        </section>
+      </main>
+    </ContainerInner>
   );
 }

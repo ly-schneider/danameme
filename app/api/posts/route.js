@@ -23,13 +23,15 @@ export async function GET(request) {
 
   try {
     const posts = await Post.find()
-      .sort({
-        createdAt: -1,
-      })
+      .sort({ createdAt: -1 })
       .populate("account", "username profileImage", Account);
 
     const postIds = posts.map((post) => post._id);
-    const comments = await Comment.find({ post: { $in: postIds } });
+    const comments = await Comment.find({ post: { $in: postIds } }).populate(
+      "account",
+      "username profileImage",
+      Account
+    );
 
     const commentsByPostId = comments.reduce((acc, comment) => {
       acc[comment.post] = acc[comment.post] || [];

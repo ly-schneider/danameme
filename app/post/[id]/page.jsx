@@ -5,6 +5,7 @@ import Post from "@/components/post/Post";
 import BackendUrl from "@/components/utils/BackendUrl";
 import { getSession } from "@/lib/Session";
 import Spinner from "@/components/utils/Spinner";
+import ContainerInner from "@/components/ContainerInner";
 
 export async function generateMetadata({ params }) {
   const session = await getSession();
@@ -74,32 +75,36 @@ export default async function PostDetailPage({ params }) {
 
   if (!post) {
     return (
-      <main className="w-full flex justify-center">
-        <Spinner className="fill-text w-10 h-10" />
-      </main>
+      <ContainerInner>
+        <main className="w-full flex justify-center">
+          <Spinner className="fill-text w-10 h-10" />
+        </main>
+      </ContainerInner>
     )
   }
 
   return (
-    <main className="flex flex-col max-w-md w-full mx-auto gap-8">
-      <div>
-        <BackButton />
-      </div>
-      <section>
-        <Post post={post} session={session} />
-      </section>
-      <section>
-        <CommentForm post={post} session={session} />
-      </section>
-      <section>
-        <ul className="flex flex-col gap-10">
-          {post.comments.map((comment) => (
-            <li key={comment._id}>
-              <Comment post={post} comment={comment} session={session} />
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+    <ContainerInner>
+      <main className="flex flex-col max-w-md w-full mx-auto gap-8">
+        <div>
+          <BackButton />
+        </div>
+        <section>
+          <Post post={post} session={session} />
+        </section>
+        <section>
+          <CommentForm post={post} session={session} />
+        </section>
+        <section>
+          <ul className="flex flex-col gap-10">
+            {post.comments.map((comment) => (
+              <li key={comment._id}>
+                <Comment post={post} comment={comment} session={session} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </ContainerInner>
   );
 }

@@ -1,3 +1,4 @@
+import ContainerInner from "@/components/ContainerInner";
 import PostForm from "@/components/post/PostForm";
 import BackendUrl from "@/components/utils/BackendUrl";
 import { getSession } from "@/lib/Session";
@@ -65,18 +66,22 @@ export default async function PostPage({ params }) {
 
   if (!post) {
     return (
-      <main>
-        <h1>Laden...</h1>
-      </main>
+      <ContainerInner>
+        <main>
+          <h1>Laden...</h1>
+        </main>
+      </ContainerInner>
     )
   }
 
   return (
-    <main className="mt-12">
-      <section className="flex flex-col max-w-md w-full mx-auto">
-        <h1 className="title">Post bearbeiten</h1>
-        <PostForm post={post} session={session} />
-      </section>
-    </main>
+    <ContainerInner>
+      <main className="mt-12">
+        <section className="flex flex-col max-w-md w-full mx-auto">
+          <h1 className="title">Post bearbeiten</h1>
+          <PostForm post={post} session={session} />
+        </section>
+      </main>
+    </ContainerInner>
   );
 }
