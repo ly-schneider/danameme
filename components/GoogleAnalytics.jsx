@@ -28,15 +28,15 @@ export default function GoogleAnalytics() {
           <button type="button" className="btn btn-primary text-sm py-1.5 order-1 sm:order-2" onClick={handleClick}>OK</button>
         </div>
       </div>
-      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-12324HERV5"></Script>
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-MP1DDV8R99"></Script>
       <Script id="gtag-script">
         {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-12324HERV5');
-            `}
+            gtag('config', 'G-MP1DDV8R99');
+        `}
       </Script>
     </>
   );
